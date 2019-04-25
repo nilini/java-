@@ -21,6 +21,7 @@
 21、Spring怎样解决循环依赖的问题
 22、dispatchServlet怎样分发任务的
 23、mysql给离散度低的字段建立索引会出现什么问题，具体说下原因
+24、Object类的主要方法？
 =====================================================================================================================
 =====================================================================================================================
 1、private修饰的方法可以通过反射访问，那么private的意义是什么？
@@ -82,3 +83,28 @@ a++; // 不是原子操作，先取出a，加1之后再写回去。
 迭代器在每次删除元素之后，会将迭代指示器指向刚刚删除的位置，所以不会漏掉元素。 
 
 23、mysql给离散度低的字段建立索引会出现什么问题，具体说下原因
+
+24、Object类的主要方法？
+    (1) clone()
+        复制引用，两个引用指向同样一个对象。
+        克隆对象Object ob2 = ob1.clone();，两个引用指向两个对象。
+        浅复制：只能复制对象，不能复制对象内部的引用。
+        深复制：复制对象的全部，及其引用。
+        覆盖Object中的clone方法，实现Clonable接口。
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            Body newBody = (Body) super.clone();
+            newBody.head = (Head) head.clone();
+            return newBody;
+        }
+        同时Head也要实现Clonanle，重写clone，执行super.clone()
+    (2) finalize()
+        一个对象被GC之前会调用finalize()，可以重写finalize()让即将被清理的对象起死回生（Person.person = this;）
+        finalize()至多由GC执行一次，用户可以手动调用对象的finalize(),但并不影响GC对finalize的行为。
+    (3) toString()
+        public String toString() {
+            return getClass().getName() + "@" + Integer.toHexString(hashCode());
+        }
+    (4) getClass()
+        getClass()获取对象的类型类。
+        .class获取类的类型类
