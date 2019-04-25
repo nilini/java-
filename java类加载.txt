@@ -11,6 +11,8 @@
 11、知道Java9的模块化技术吗？
 12、jigsaw，jboss modules和osgi的区别？
 13、ClassNotFoundException和NoClassDefFoundErr区别？
+14、包冲突、类冲突、模块化
+15、SPI
 ===========================================================================
 1、什么是类加载？
 负责读取java字节代码，并转换成java.lang.Class类的一个实例。通过此实例的 newInstance()方法就可以创建出该类的一个对象。
@@ -42,7 +44,7 @@ jdk提供了三种类加载器：
       获取系统类加载器：Thread.currentThread().getContextClassLoader()
 8、Thread.getContextClassLoader和ClassLoader.getClassLoader的区别
     getClassLoader()返回该类的类加载器，如果是bootstrp加载器加载的类返回Null。
-    getContextClassLoader()返回线程上下文加载器。线程创建者在创建线程之后会用对应的setContextClassLoader()方法将合适的类加载器设置到线程中。
+    getContextClassLoader()返回线程上下文加载器（TCCL）。线程创建者在创建线程之后会用对应的setContextClassLoader()方法将合适的类加载器设置到线程中。
     如果不设置默认是系统类加载器就是AppClassLoader。
     有些框架为了做类的隔离会通过不同的ClassLoader来做类的隔离，假设框架提供了一个可拓展的服务接口，这个接口的类加载器是AppClassLoader，但是这个接口的实现
     则交给使用者来拓展，那么实现类很有可能被自定义的ClassLoader加载导致AppClassLoader无法找到实现类。如果在框架的层面希望能够获取到接口实现类就需要将实现类
@@ -53,3 +55,24 @@ jdk提供了三种类加载器：
     NoClassDefFoundErr：要查找的类在编译的时候是存在的，运行的时候却找不到了。
     加载时从外存储器找不到需要的class就出现ClassNotFoundException 
     连接时从内存找不到需要的class就出现NoClassDefFoundError
+14、包冲突、类冲突、模块化
+    
+15、SPI
+    SPI（Service Provider Interface）是JDK内置的一种提供服务发现的机制。
+    java中子类获取父类或接口信息非常方便，但是根据一个接口获取该接口的所有实现类却并不那么容易。
+    一个方法是可以扫描classpath下所有的class与jar包中的class，接着用ClassLoader加载进来，再判断是否是给定接口的子类。但是代价太大。
+    java推出了ServiceLoader类来提供服务发现机制，动态的为某个接口寻找服务实现，当服务的提供者提供了服务接口的一种实现之后，必须根据SPI约定在META-INF/services/目录
+    创建一个以服务接口命名的文件，该文件里写的就是实现该服务接口的具体实现类。当程序调用ServiceLoader的load方法的时候，ServiceLoader能够通过约定的目录找到指定的文件，
+    并装载实例化，完成服务的发现。
+    public class SPITest {
+        public static void main(String[] args) {
+            ServiceLoader<Animal> load = ServiceLoader.load(Animal.class);
+            Iterator<Animal> iterator = load.iterator();
+            while(iterator.hasNext()){
+                Animal animal = iterator.next();
+                animal.eat();
+            }
+        }
+    }   
+    ServiceLoader首先找到接口文件，然后解析出文件中的所有服务实现类并加载实例化。
+    JDBC使用了SPI机制，让所有的任务都交给不同的数据库厂商各自去完成，无论是实现Driver接口，还是SPI要求的接口文件，都做到了让用户不需要关心一点细节。
