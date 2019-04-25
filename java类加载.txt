@@ -1,8 +1,12 @@
-什么是类加载？
-双亲委派是什么？
-为什么要双亲委派？
-如何破坏双亲委派？
-为什么要破坏双亲委派？
+1、什么是类加载？
+
+2、什么是类加载器？
+3、双亲委派是什么？
+4、为什么要双亲委派？
+5、可以不可以自己写个String类
+6、为什么要破坏双亲委派？
+7、如何破坏双亲委派？
+
 修改类加载策略要复写哪个方法？
 知道模块化吗？
 知道Java9的模块化技术吗？
@@ -10,3 +14,36 @@ jigsaw，jboss modules和osgi的区别？
 ClassNotFound怎么回事？
 如何解决ClassNotFound？
 ClassNotFoundException和NoClassDefFoundErr区别？
+===========================================================================
+2、什么是类加载器？
+负责读取java字节代码，并转换成java.lang.Class类的一个实例。
+jdk提供了三种类加载器：
+    Bootstrp Classloader(启动类加载器): c++编写，在jvm启动后初始化，主要负责%JAVA_HOME%/jre/lib，%JAVA_HOME%/jre/classes，-Xbootclasspath参数执行的路径中的类。
+    ExtClassLoader(拓展类加载器): Bootstrp loader加载ExtClassLoader，并且将ExtClassLoader的父加载器设置为Bootstrp loader。ExtClassLoader是java编写（sun.misc.Launcher$ExtClassLoader）
+                    加载%JAVA_HOME%/jre/lib/ext路径下以及 java.ext.dirs系统变量指定的路径中类库。
+    AppClassLoader(应用程序类加载器): 加载完ExtClassLoader后，就会加载AppClassLoader，并且将AppClassLoader的父加载器指定为ExtClassLoader。java编写。实现类是sun.misc.Launcher$AppClassLoader.
+                    ClassLoader中有个getSystemClassLoader方法，此方法返回的正是AppclassLoader。AppClassLoader主要负责加载classpath所指定的位置的类或者jar文档，是java默认的类加载器。
+3、双亲委派是什么？
+    子加载器接收到了类加载请求，但子加载器首先不会去尝试加载类而是委托给父加载器去加载。父加载器重复这一操作，直到顶层加载器，父加载器无法加载会交给子加载器。
+4、为什么要双亲委派？
+    可以避免重复加载，当父加载器已经加载了该类的时候，子加载器就没必要再加载一次。
+    为了安全，java核心的类不会被随意替换，假设通过网络传递一个名为java.lang.String的类，通过双亲委派传递到启动类加载器，启动类发现已经加载过就不会重复加载，而直接返回已加载过String.class。
+5、可以不可以自己写个String类
+    不可以，自定义的String类不能替换掉JDK本身的String类，就算自己写一个classLoader加载器类来加载自己写的java.lang.String类，但是不会加载
+    成功，因为java.*开头的类，jvm的实现中保证了必须由bootstrp来加载。
+6、为什么要破坏双亲委派？
+    某些情况下父加载器需要委托子加载器去加载class文件。受到加载范围的限制，父加载器无法加载到需要的文件。
+    以Driver接口为例，由于Driver接口定义在jdk中，而其实现由各个数据库的服务商来提供，比如mysql就写了MySQL Connector，DriverManager（jdk提供）要加载各个实现了Driver接口的实现类，然后进行管理，
+    但是DriverManager由启动类加载器加载，只能加载JAVA_HOME的lib文件，这个时候父加载器只能委托子加载器来加载Driver实现。这就破坏了双亲委派。
+7、如何破坏双亲委派？
+    1、双亲委派模型出现之前，即JDK 1.2发布之前。
+    2、JDBC中Driver类需要动态去加载不同数据库类型的Driver类，用户的Driver类不能由启动类加载器去加载，应该由应用程序加载类去进行类加载。
+      引入了线程上下文类加载器，可以把原本需要由启动类加载器进行加载的类由应用程序类加载器进行加载。
+      获取系统类加载器：Thread.currentThread().getContextClassLoader()
+8、Thread.getContextClassLoader和ClassLoader.getClassLoader的区别
+    getClassLoader()返回该类的类加载器，如果是bootstrp加载器加载的类返回Null。
+    getContextClassLoader()返回线程上下文加载器。线程创建者在创建线程之后会用对应的setContextClassLoader()方法将合适的类加载器设置到线程中。
+    如果不设置默认是系统类加载器就是AppClassLoader。
+    有些框架为了做类的隔离会通过不同的ClassLoader来做类的隔离，假设框架提供了一个可拓展的服务接口，这个接口的类加载器是AppClassLoader，但是这个接口的实现
+    则交给使用者来拓展，那么实现类很有可能被自定义的ClassLoader加载导致AppClassLoader无法找到实现类。如果在框架的层面希望能够获取到接口实现类就需要将实现类
+    用getContextClassLoader获得的ClassLoader来加载。
