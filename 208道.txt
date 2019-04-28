@@ -631,3 +631,88 @@
                 将应答消息编码为Buffer，调用SocketChannel的write将消息异步发送给客户端。
     AIO(异步非阻塞IO)：
                 采用“订阅-通知”模式：即应用程序向操作系统注册IO监听，然后继续做自己的事。当操作系统发生IO事件，并且准备好数据后，在主动通知应用程序，触发相应的函数。
+
+17.Files的常用方法都有哪些？
+    createNewFile() 创建新文件
+    mkdirs() 创建新的目录，若父目录不存在，会自动创建
+    renameTo(File dest)重命名文件
+    isFile()判断是否是文件
+    isDirectory() 判断是否是目录
+    exists() 判断文件或者目录是否存在
+    canRead() 判断文件是否可读
+    canWrite() 判断文件是否可写
+    isHidden() 判断文件是否隐藏
+
+    getAbsolutePath() 获取绝对路径
+    getPath()获取相对路径
+    getName()获取文件或目录
+    length() 获取文件大小
+    lastModified() 获取文件最后一次修改的时间
+    list()获取路径表示目录下的所有文件和目录名称
+    list(FilenameFilter filter) 获取满足过滤器FilenameFilter条件的所有目录或文件
+    listFiles() 获取路径表示目录下的所有文件和目录对象
+    listFiles(FilenameFilter filter) 获取满足过滤器FilenameFileter条件的所有目录或文件对象
+18.java 容器都有哪些？
+35.并行和并发有什么区别？
+    单个CPU执行多个线程，多个线程按时间片轮流执行就是并发。每一时刻，只会有一个线程被执行。
+    多个CPU同时执行多个线程是并行，同一时刻可以有多个线程在执行。
+36.线程和进程的区别？
+    进程是资源（cpu、内存等）分配的最小单位，线程是程序执行的最小单位。
+    一个进程可以有多个线程。
+    进程粒度比线程大。
+37.守护线程是什么？
+    只有当最后一个非守护线程结束时，守护线程才会随着JVM一同结束。
+    GC是守护线程。
+    childThread.setDaemon(true);必须在childThread.start();之前。
+    在Daemon线程中产生的新线程也是Daemon的。
+    java的线程池会将守护线程转换为用户线程。
+
+    public class DeamonTest {
+        public static void main(String[] args) {
+            Thread mainThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Thread childThread = new Thread(new ChildThread());
+                    // 将childThread设置为守护线程。
+                    // mainThread线程退出后，守护线程也即退出
+                    childThread.setDaemon(true);
+                    childThread.start();
+                    System.out.println("DeamonTest.run");
+                }
+            });
+            mainThread.start();
+        }
+    }   
+38.创建线程有哪几种方式？
+    1) 继承Thread
+    2) 实现Runnable
+    3) Callable和FutureTask
+    https://www.cnblogs.com/dolphin0520/p/3949310.html
+    http://www.importnew.com/30531.html
+        1)和2)的缺陷是：在执行完任务之后无法获取执行结果。
+        FutureTask实现了Runnable和Future
+
+        public class MyCallable implements Callable<String> {
+            private int count = 20;
+
+            @Override
+            public String call() throws Exception {
+                for (int i = count; i >0 ; i--) {
+                    System.out.println(Thread.currentThread().getName()+"当前票数：" + i);
+                }
+                return "sale out";
+            }
+
+            public static void main(String[] args) throws ExecutionException, InterruptedException {
+                Callable<String> callable = new MyCallable();
+                FutureTask<String> futureTask = new FutureTask<>(callable);
+                Thread mThread = new Thread(futureTask);
+                Thread mThread2 = new Thread(futureTask);
+                Thread mThread3 = new Thread(futureTask);
+                mThread.start();
+                mThread2.start();
+                mThread3.start();
+                System.out.println(futureTask.get());
+            }
+        }
+    4)
