@@ -653,6 +653,18 @@
     listFiles() 获取路径表示目录下的所有文件和目录对象
     listFiles(FilenameFilter filter) 获取满足过滤器FilenameFileter条件的所有目录或文件对象
 18.java 容器都有哪些？
+19.Collection 和 Collections 有什么区别？
+    Collection是集合类的一个顶级接口。
+    Collections是集合类的一个工具类：
+        Collections.sort(list) 排序
+        Collections.shuffle(list) 混排
+        Collections.reverse(list) 反转
+        Collections.fill(List list, Object o) 替换所有元素
+        Collections.copy(List list1, List list2) 将list2中的元素全部复制到list1中，并覆盖相应索引的元素。
+        Collections.min(Collection, Comparator)
+        Collections.max(Collection, Comparator) 根据指定比较器产生的顺序，返回指定Collectiond的最小（大）
+    Arrays同样也是数组工具类。
+
 35.并行和并发有什么区别？
     单个CPU执行多个线程，多个线程按时间片轮流执行就是并发。每一时刻，只会有一个线程被执行。
     多个CPU同时执行多个线程是并行，同一时刻可以有多个线程在执行。
@@ -687,9 +699,15 @@
     1) 继承Thread
     2) 实现Runnable
     3) Callable和FutureTask
+        1)和2)的缺陷是：在执行完任务之后无法获取执行结果。
+        
+        FutureTask是一种可以取消的异步的计算任务。它的计算是通过Callable实现的，等价于可以携带结果的Runnable。
+        有三个状态：等待、运行、完成（完成包括所有计算以任意的方式结束(正常结束、取消、异常)）。
+        主要方法：
+            1、get() 获取结果只有在计算完成时获取，否则一直阻塞直到任务转入完成状态。
     https://www.cnblogs.com/dolphin0520/p/3949310.html
     http://www.importnew.com/30531.html
-        1)和2)的缺陷是：在执行完任务之后无法获取执行结果。
+        
         FutureTask实现了Runnable和Future
 
         public class MyCallable implements Callable<String> {
@@ -715,4 +733,101 @@
                 System.out.println(futureTask.get());
             }
         }
-    4)
+
+39.说一下 runnable 和 callable 有什么区别？
+    1、Runnable线程体在run()中，callable线程体在call()中。
+    2、Callable接口支持返回线程执行结果，通过FutureTask.get()方法获取执行结果，get方法会阻塞直到结果返回。
+    3、Runnable没有返回值。Callable + FutureTask 可以获取多线程运行的结果，也可以在等待太长时间没有获取到需要的数据的情况下取消该线程的任务。
+
+40.线程有哪些状态？
+    1、新建（NEW）：实现Runnable接口和继承Thread可以得到一个线程类，new一个实例，线程就进入了新建状态，即 start() 之前的状态。
+    2、可运行（RUNNABLE）：
+            有资格运行，但还没运行，等待调度。
+            调用线程的start()方法。
+            当前线程的sleep()结束。
+            其他线程join()结束。
+            调用当前线程的yield()方法。
+    3、运行（RUNNING）
+            线程调度程序从可运行池中选择一个线程设置为当前线程，这是线程进入运行状态的唯一方式。
+    4、阻塞（BLOCKED）
+            当前线程调用Thread.sleep()。
+            运行在当前线程的其他线程调用join()方法。
+            等待用户输入的时候。
+    5、死亡（DEAD）
+            线程的run()方法完成时，就死去了，死去的线程不能复生。
+
+41.sleep() 和 wait() 有什么区别？
+    ====sleep()====
+    sleep()是线程类Thread的方法；
+    调用sleep()会阻塞线程，直到时间到后再度执行。
+    ====wait()====
+    而wait()是Object的方法。
+    wait要持有锁，只能在同步方法或同步块中调用。调用锁资源的wait()方法。
+    调用wait()会释放锁，需要调用notify/notifyAll后重新获取对象锁资源后才能继续执行。
+42.notify()和 notifyAll()有什么区别？
+    notify()唤醒在此监视器上等待的一个线程。
+    notifyAll()唤醒在此监视器上等待的全部线程。
+    但都要等到当前线程释放锁之后，被唤醒的线程才会执行。
+43.线程的 run()和 start()有什么区别？
+    调用Thread的start()方法，可以异步启动线程，但启动的线程不会马上运行，会放到等待队列中等待CPU调度。只有线程被CPU调度才会调用run()方法执行。
+    线程的逻辑写在run()。线程创建后只有调用start()之后才能进入可运行状态，等待调度执行。
+    可直接调用run()方法。
+44.创建线程池有哪几种方式？
+45.线程池都有哪些状态？
+46.线程池中 submit()和 execute()方法有什么区别？
+    创建并开启一个线程开销很大，线程池可以避免频繁创建关闭线程，以缓解性能问题。
+    线程在被使用前就存在线程池，执行完任务后，线程返回线程池等待下次使用。
+    java通过executor对象来实现自己的线程池模型，可以使用exector接口或其他线程池的实现。
+    =============接口Executor==========================
+    ```
+    简单使用:
+    public class mainTest {
+        public static void main(String[] args) {
+            Executor executor = Executors.newSingleThreadExecutor();
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("mainTest.run");
+                }
+            });
+        }
+    }
+    ```
+    如果有工作线程可用，execute()方法将执行语句，否则就把Runnable任务放进队列，等待线程可用。
+    
+    Executors类里的工厂方法可以创建很多类型的线程池（最终构建线程池使用ThreadPoolExecutor）：
+    newSingleThreadExecutor()：包含单个线程和无界队列的线程池，同一时间只能执行一个任务。
+    newFixedThreadPoll()：包含固定数量线程并共享无界队列的线程池；当所有线程处于工作状态，有新任务提交时，任务在队列中等待，直到一个线程变为可用状态。
+    newCacheThreadPool()：只有需要时创建新线程的线程池。
+    newWorkStealingThreadPool()：基于工作窃取算法的线程池。
+
+    ====================接口ExecutorService===============
+    ExecutorService是Executor的子接口，其定义了更多的方法。
+    submit()方法可以返回Furute对象。
+    
+    ===================接口ScheduledExecutorService========
+    ScheduledExecutorService是ExecutorService的一个子接口，增加了调度任务的方法。
+    sechedule()方法的参数指定执行的方法、延时和TimeUnit
+    
+    ```
+    ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
+    Future<Double> future = executor.schedule(callableTask, 2, TimeUnit.MILLISECONDS); 
+    ```
+    =================ThreadPoolExecutor和ForkJoinPool==============
+    ExecutorService的两个实现。
+
+74.throw 和 throws 的区别？
+    throws 是用来声明一个方法可抛出的所有异常信息，throws是将异常声明但不处理，而是将异常往上传，传给调用者。
+    throw 抛出一个具体的异常类型。
+    一个异常要么向上抛（throws）给调用者去处理，要么自身捕获（try{}catch(Exception e){}），自己去处理
+75.final、finally、finalize 有什么区别？
+    final修饰的类不能被继承。
+    final修饰的成员变量要赋值初始化或在构造方法中赋值。
+    final修饰的局部变量必须要赋值初始化，并且不能修改。
+    final修饰的方法会被JVM优化。
+    GC前对象会调用finalize，可在finalize中将自身（this）赋值给其他变量从而起死回生。
+76.try-catch-finally 中哪个部分可以省略？
+    finally可以省略。finally块最终都会执行
+77.try-catch-finally 中，如果 catch 中 return 了，finally 还会执行吗？
+    照样执行
+78.常见的异常类有哪些？
