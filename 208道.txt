@@ -827,7 +827,84 @@
     final修饰的方法会被JVM优化。
     GC前对象会调用finalize，可在finalize中将自身（this）赋值给其他变量从而起死回生。
 76.try-catch-finally 中哪个部分可以省略？
-    finally可以省略。finally块最终都会执行
+    1) finally可以省略。finally块最终都会执行。
+    2) 关闭资源的操作放到finally中，因为try块中抛出异常后不会继续向下执行。程序可能无法到达try的尾部，但一定会到达finally。
+    3) 不要捕获Throwable，Throwable是所有exceptions和errors的父类。不仅捕获所有异常而且捕获所有错误。
+       这些错误由JVM抛出，用来表明不打算应用程序处理的严重错误。比如OutOfMemoryError和StackOverflowError。
+       折中方法是在底层捕获Throwable，其他层级捕获Exception。
+    4) try-with-resource 自动关闭外部资源。资源句柄要实现AutoCloseable接口。
+        try (FileInputStream inputStream = new FileInputStream(new File("test"))) {
+            System.out.println(inputStream.read());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 77.try-catch-finally 中，如果 catch 中 return 了，finally 还会执行吗？
     照样执行
 78.常见的异常类有哪些？
+    Throwable是所有异常或错误的超类。
+    Error是Throwable的子类。
+    Exception是Throwable的子类。
+        异常分为两大类：
+            Checked异常：非Runtime异常。用户代码显式抛出的异常。编译器强制要求处理异常或抛出异常，否则通不过编译。
+                    f(){
+                        int a = 123;
+                        if(a = 1233){
+                            throw new NullPointerException();
+                        }
+                    }
+                    f()的调用者要么向上抛异常(throws)，要么处理异常（try..catch）。
+            Runtime异常：所有RuntimeException类及其子类的实例被称为Runtime异常。不可预见的异常，在运行时候抛出。
+    常见运行时异常：
+        ClassCastException(类转换异常)：
+            instanceof：判断一个对象是否为一个类的实例。obj instanceog Class。
+                        1、obj必须为引用类型，不能是基本类型。
+                        2、obj为null返回false。
+                        3、obj为类或接口的直接或间接子类，返回true。
+                        4、
+                            ArrayList arrayList = new ArrayList();
+                            arrayList instanceof List;  // true
+                            List list = new ArrayList();
+                            list instanceof ArrayList; // true
+        ArrayIndexOutOfBoundsException(数据越界异常)
+                访问不不在的数组索引，或设置了负数索引。
+        NullPointerException(空指针异常)
+                public class mainTest {
+                    public static void main(String[] args)  {
+                        Person person = new Person(2,"saisai");
+                        person = null;
+                        System.out.println(person.getAge());
+                    }
+                }
+                使用前判断是否为空（null）。
+                亦可使用Optional优雅地决绝判断null的多层嵌套。
+        ArrayStoreException(数据存储异常)
+        BufferOverflowException(缓冲溢出异常)
+79.http 响应码 301 和 302 代表的是什么？有什么区别？
+
+80.forward 和 redirect 的区别？
+
+81.简述 tcp 和 udp的区别？
+
+82.tcp 为什么要三次握手，两次不行吗？为什么？
+    三次握手：
+        第一次握手：客户端给服务器发送一个SYN报文。
+        第二次握手：服务端收到SYN报文之后，会应答一个SYN+ACK报文。
+        地三次握手：客户端收到SYN+ACK报文之后，会回应一个ACK报文。
+    四次挥手：
+        假设是客户端先发起关闭请求。
+        第一次挥手：客户端发送一个FIN报文，报文中会指定一个序列号。此时客户端处于CLOSED_WAIT1状态。
+        第二次挥手：服务端收到FIN之后，会发送ACK报文，且把客户端的序列号值+1作为ACK报文的序列号值，表明已经收到客户端的报文了，此时服务端处于CLOSE_WAIT2状态。
+        第三次挥手：如果服务端也想断开连接，和客户端的第一次挥手一样，发给FIN报文，且指定一个序号。此时服务器端处于LAST_ACK状态。
+        第四次挥手：客户端收到FIN之后，一样发送一个ACK报文作为应答，且把服务端的序列号值+1作为自己ACK报文的序列号，此时客户端处于TIME_WAIT状态。需要过一阵子
+                   以确保服务端收到自己ACK报文之后才会进入CLOSED状态。
+                   服务器端收到自己的ACK报文之后才会进入CLOSED状态。
+83.说一下 tcp 粘包是怎么产生的？
+    TCP是基于字节流的传输层通信协议，调用发送函数只是把数据拷贝到了发送缓冲区，然后再由驱动从缓冲区拷贝数据拼包发送到网络，
+    接收端也是先把数据拷贝到接收缓冲区，再通知上层处理，上层需要自己重新整理数据，形成原始的发送格式。
+84.OSI 的七层模型都有哪些？
+
+85.get 和 post 请求有哪些区别？
+
+86.如何实现跨域？
+
+87.说一下 JSONP 实现原理？

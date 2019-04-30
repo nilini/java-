@@ -1,0 +1,63 @@
+Optional 类
+`````````````````````````````````````````
+  /**
+        * 创建Optional
+        * */
+        //////of()
+        // 创建值为ss的String类型的Optional
+        Optional<String> ss = Optional.of("ss");
+        // 会抛出 NullPointerException
+//        Optional<Object> o = Optional.of(null);
+
+        /////ofNullable()
+        // 为指定的值创建Optional对象。可以传入null。
+        Optional<String> o1 = Optional.ofNullable(null);
+        Optional<String> o2 = Optional.ofNullable("ssss");
+        
+        /////empty()
+        Optional<Object> empty = Optional.empty();
+
+        /**
+         * 返回 Optional中的值
+         * */
+        System.out.println(empty.get());
+
+        /**
+         * 判断 Optional 中的值
+         * */
+        // orElse 如果创建的Optional中有值存在，则返回此值，否则返回一个默认值
+        Person person = new Person(22, "ss");
+        Optional<Person> person1 = Optional.of(person);
+        System.out.println(person1.orElse(new Person(1, "mm")));
+
+        // orElseGet 如果创建的Optional中有值存在，则返回值，否则返回一个由Supplier接口生成的值
+        System.out.println(person1.orElseGet((Supplier<? extends Person>) new Person(2, "kk")));
+
+        // orElseThrow 如果创建的Optional中有值存在，则返回此值，否则抛出一个由指定的Supplier接口生成的异常
+        System.out.println(person1.orElseThrow(CustomException::new));
+
+    }
+    static class CustomException extends RuntimeException{
+        public CustomException() {
+            super("自定义异常");
+        }
+        public CustomException(String message) {
+            super(message);
+        }
+    }
+`````````````````````````````````````````
+使用Optional解决NullPointerException
+ public static void main(String[] args) throws Exception {
+        Person person = new Person(12, "ss");
+        String name = Optional.ofNullable(person)
+                .map(n->n.getName())
+                .map(u->u.getName_zh())
+                .filter(s->s.length()<10)
+                .orElseThrow(()->new Exception("取值错误"));
+        System.out.println(name);
+
+        Optional.ofNullable(person)
+                .map(n->n.getName())
+                .map(u->u.getName_zh())
+                .ifPresent(System.out::println);
+}
