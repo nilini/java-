@@ -180,3 +180,10 @@ redis集群，高可用，原理
 mySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据
 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次
 redis的数据淘汰策略
+
+一、Java基础和高级
+1.String类为什么是final的。
+  final修饰的类不能被继承。String作为一个
+二、spring框架
+1、spring框架中需要引用哪些jar包，以及这些jar包的用途
+2、srpingMVC的原理
