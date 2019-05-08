@@ -1004,6 +1004,7 @@
             因为连接池使用到了多个实例。
 186.jedis 和 redisson 有哪些区别？
 http://www.cnblogs.com/yw0219/p/6084128.html
+https://www.cnblogs.com/hackyo/p/6646051.html
 187.怎么保证缓存和数据库数据的一致性？
 
 188.redis 持久化有几种方式？
