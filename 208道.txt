@@ -908,3 +908,112 @@
 86.如何实现跨域？
 
 87.说一下 JSONP 实现原理？
+
+179.redis 是什么？都有哪些使用场景？
+    redis是内存数据库，所有数据都放在内存。并可选择持久化。
+    高速缓存。
+    消息队列。
+    分布式会话（保存session）。
+    分布式锁（全局id，减库存、秒杀等）。
+    计数器（浏览量、播放量等。可减轻数据库压力，使用incr加1，内存操作，性能好）。
+    排行榜（浏览排行榜、销售排行榜等。redis提供有序集合数据类能实现各种复杂的排行榜应用）
+180.redis 有哪些功能？
+
+181.redis 和 memecache 有什么区别？
+    1) redis支持的数据更多。
+    2) redis 可持久化，而 memecache 不能
+    3) 两者都是内存数据库
+182.redis 为什么是单线程的？
+    1) redis 是基于内存的操作，CPU不是瓶颈。
+       Redis的瓶颈最有可能是内存和宽带。既然单线程容易实现，而且CPU不会成为瓶颈，那么顺理成章地采用单线程的方案。
+    2) 不需要各种锁的性能消耗。
+       Redis的数据结构并不全是简单的k-v，还有lish、hash等复杂的结构，这些结构可能会进行很细粒度的操作，比如在很长的列表后面添加一个元素，在hash当中添加
+       或者删除一个对象，这些操作可能就需要加非常多的锁，导致同步开销大大增加。
+       在单线程的情况下，就不用考虑各种锁的问题，不存在加锁释放的操作，没有因为可能出现死锁而导致的性能消耗。
+    3) 单线程多进程集群方案
+       多线程的自然比单线程有更高的性能上限，但是在今天的计算环境，即时单机多线程的上限也往往不能满足需要了，单线程多进程的集群方案中多线程的技术用不上。
+    4) CPU消耗
+       采用单线程，避免了不必要的上下文切换和竞争条件，也不存在多线程导致的切换而消耗CPU。
+       如果CPU称为瓶颈，或不想让其他CPU闲置，可考虑多起几个Redis进程。
+    Redis采用网络IO多路复用技术来保证在多连接的时候系统的高吞吐量。尽量减少网络IO的时间消耗。
+
+183.什么是缓存穿透？怎么解决？
+
+184.redis 支持的数据类型有哪些？
+    String
+    Hash
+    List
+    Set
+    sorted set
+185.redis 支持的 java 客户端都有哪些？
+    jedis redission
+        jedis使用：
+            >>>
+            Jedis jedis = new Jedis("192.168.1.1", 6379);
+            String code = jedis.set("ss", "wang");
+            String s = jedis.get("ss");
+            >>>
+        直连:
+            优点：简单方便。
+            缺点: 1) 存在每次新建/关闭TCP连接开销
+                  2) Jedis对象数量无法控制。
+                  4) Jedis 对象线程不安全。
+        连接池：
+            优点：1) 无需每次连接都生成Jedis对象。
+                 2) 无需每次连接都创建TCP连接
+                 3) 可控制Jedis对象数量。
+            缺点：1) 配置参数多，配置不合理也会出现问题。
+
+        Jedis提供了JedisPool这个类作为Jedis的连接池：
+        >>>
+        // 配置
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        jedisCommands.setMaxTotal(1024);
+        jedisCommands.setMaxIdle(100);
+        jedisCommands.setMaxWaitMillis(100);
+        jedisCommands.setTestOnBorrow(false);
+        jedisCommands.setTestOnReturn(true);
+        // 初始化JedisPool
+        JedisPool jedisPool = new JedisPool(jedisPoolConfig, "192.168.1.1", 6379, 2000);
+        Jedis jedis = jedisPool.getResource(); 
+        JedisCommands jedisCommands = jedis;
+        jedisCommands.set("ss", "wang");
+        >>>
+
+        jedis pipeline：
+        jedis 支持Pipeline特性。
+        >>>
+         public void mdel(List<String> keys) {
+            Jedis jedis = new Jedis("192.168.58.99");
+            Pipeline pipeline = jedis.pipelined();
+            for (String key : keys) {
+                pipeline.del(key); // 此时命令并非真正执行
+            }
+            // 真正执行命令
+            pipeline.sync(); // 除了pipline.sync(),还可以使用pipeline.syncAndReturnAll()将pipeline的命令进行返回。
+        }
+        >>>
+
+        线程安全：
+        Jedis单实例：
+            单实例不是线程安全的，jedis的请求流和响应流都是全局变量，是共享的。
+            当不同的线程在set和get的时候，有可能出现线程A的set()的响应流，被线程B的get()作为响应返回。
+            为什么单实例是单线程而不是多线程？
+            是因为redis就是单线程，一个实例使用一个线程和使用100个线程去发送命令没有本质的区别，所以没必要设置为线程安全。
+        连接池是线程安全的：
+            因为连接池使用到了多个实例。
+186.jedis 和 redisson 有哪些区别？
+http://www.cnblogs.com/yw0219/p/6084128.html
+187.怎么保证缓存和数据库数据的一致性？
+
+188.redis 持久化有几种方式？
+
+189.redis 怎么实现分布式锁？
+
+190.redis 分布式锁有什么缺陷？
+
+191.redis 如何做内存优化？
+
+192.redis 淘汰策略有哪些？
+
+193.redis 常见的性能问题有哪些？该如何解决？
