@@ -742,5 +742,35 @@ wait-notify 写一段代码来解决生产者-消费者问题
         不过这个选择过程对开发者完全透明、开发者也无需关心。
 3、什么是 对象/关系 映射集成模块
     面向对象编程中对象和关系数据库的关系的一个映射。
+
 4、什么是 Java 的反射机制
-    
+    Java Reflaction in Action。反射是运行中的程序检查自己和软件运行环境的能力。
+    即反射可以在运行时根据指定的类名获取类的信息。
+        
+    Class c=Class.forName("className");注明：className必须为全名，也就是得包含包名，比如，cn.netjava.pojo.UserInfo; 
+    Object obj=c.newInstance();//创建对象的实例 
+    OK，有了对象就什么都好办了，想要什么信息就有什么信息了。   
+    获得构造函数的方法 
+    Constructor getConstructor(Class[] params)//根据指定参数获得public构造器
+
+    Constructor[] getConstructors()//获得public的所有构造器
+
+    Constructor getDeclaredConstructor(Class[] params)//根据指定参数获得public和非public的构造器
+
+    Constructor[] getDeclaredConstructors()//获得public的所有构造器 
+    获得类方法的方法 
+    Method getMethod(String name, Class[] params),根据方法名，参数类型获得方法
+
+    Method[] getMethods()//获得所有的public方法
+
+    Method getDeclaredMethod(String name, Class[] params)//根据方法名和参数类型，获得public和非public的方法
+
+    Method[] getDeclaredMethods()//获得所以的public和非public方法 
+    获得类中属性的方法 
+    Field getField(String name)//根据变量名得到相应的public变量
+
+    Field[] getFields()//获得类中所以public的方法
+
+    Field getDeclaredField(String name)//根据方法名获得public和非public变量
+
+    Field[] getDeclaredFields()//获得类中所有的public和非public方法
