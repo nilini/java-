@@ -1,0 +1,83 @@
+https://blog.csdn.net/qq_19782019/article/details/80292110
+什么是servlet？
+客户端发送请求到服务器；
+服务器启动并调用Servlet，Servlet根据客户端请求生成响应内容并将其传给服务器；
+客户端将响应返回客户端。
+
+Servlet工作原理？
+Servlet接口定义了Servlet与Servlet容器之间的契约：Servlet容器将Servlet类载入内存，并产生Servlet实例和调用它具体的方法。
+用户请求致使Servlet容器调用Servlet的Service()方法，并传入一个ServletRequest对象和一个ServletResponse对象。
+ServletRequest对象和ServletResponse对象都是由Servlet容器（TomCat）封装好的，并不需要开发人员去实现，可直接使用。
+ServletRequest中封装了当前的Http请求，开发人员不必解析和操作原始的Http数据。
+ServletResponse表示当前用户的Http响应，开发人员只需要直接操作ServletResponse对象就能把响应轻松地发送给用户。
+
+每个应用程序有一个ServletContext对象，封装上下文。
+每个Servlet对象都有一个封装Servlet配置的ServletConfig对象。
+
+Servlet接口中定义的方法
+>>>>>>
+package javax.servlet;
+
+import java.io.IOException;
+
+public interface Servlet {
+    void init(ServletConfig var1) throws ServletException;
+
+    ServletConfig getServletConfig();
+
+    void service(ServletRequest var1, ServletResponse var2) throws ServletException, IOException;
+
+    String getServletInfo();
+
+    void destroy();
+}
+>>>>>>>
+
+Servlet的生命周期
+init()：当Servlet第一次被请求时，Servlet容器就会调用init()方法来初始化一个Servlet对象出来，可以利用init()方法来执行响应的初始化工作。
+        调用init()方法时，Servlet容器会出入一个ServletConfig对象对Servlet对象进行初始化。
+service()：每当请求Servlet时，Servlet容器就会调用service()方法。
+destory()：当销毁Servlet时，Servlet容器就会调用destory()方法。在卸载应用程序或者关闭Servlet容器时，就会执行destory()。
+
+ServletRequest接口
+Servlet容器对于接收到的每一个Http请求，都会创建一个ServletRequest对象，并把这个对象传给Servlet的Service()方法。
+ServletRequest对象封装了关于这个请求的许多详细信息。
+getParameter是在ServletRequest中最常用的方法，可用于获取查询字符串的值。
+
+ServletResponse接口
+Servlet容器对于接收到的每一个Http请求，都会创建一个ServletResponse对象，并把这个对象传给Servlet的Service()方法。
+getWriter()方法，返回一个可以向客户端发送文本的Java.io.PrintWrite对象。默认情况下，PrintWrite对象使用ISO-8859-1编码（该编码在输入中文时会发生乱码）。
+
+在发送客户端发送响应时，大多数都是使用该对象向客户端发送HTML。也可以使用getOutputStream向客户端发送二进制流数据。
+在发送任何HTML之前，应该先调用setContentType()方法，设置响应的内容类型，并将“text/html”作为一个参数传入。
+
+ServletContect对象
+每个Web应用程序都只有一个SevletContext对象。
+
+GenericServlet抽象类
+可以通过实现Servlet接口来编写Servlet，但是必须实现Servlet接口中定义的所有方法，即使有一些方法中没有任何东西也要去实现。并且
+还需要手动维护ServletConfig这个对象的引用。
+
+GenericServlet抽象类的好处：
+1.为Servlet接口中的所有方法提供了默认的实现，则程序员需要什么就直接改什么，不再需要把所有的方法都自己实现了。
+2.提供方法，包围ServletConfig对象中的方法。
+3.将init( )方法中的ServletConfig参数赋给了一个内部的ServletConfig引用从而来保存ServletConfig对象，不需要程序员自己去维护ServletConfig了。
+
+HttpServlet抽象类
+HttpServlet抽象类是继承于GenericServlet抽象类而来的。使用HttpServlet抽象类时，还需要借助分别代表Servlet请求和Servlet响应的HttpServletRequest和HttpServletResponse对象。
+
+ServletContextListener（Servlet全局监听器）
+ServletContextListener是一个接口，继承了EventListener接口。只要实现了ServletContextListener，那么就实现了“监听ServletContext”的功能。
+>>>>>>>>>>
+public interface ServletContextListener extends EventListener {
+    void contextInitialized(ServletContextEvent var1);
+
+    void contextDestroyed(ServletContextEvent var1);
+}
+>>>>>>>>>>
+spring中听器类【org.springframework.web.context.ContextLoaderListener】实现了ServletContextListener接口，能够监听ServletContext的生命周期中的“初始化”和“销毁”。
+
+当Servlet容器启动时，ServletContext对象被初始化，然后Servlet容器调用web.xml中注册的监听器的
+public void contextInitialized(ServletContextEvent event)
+方法，而在监听器中，调用了this.initWebApplicationContext(event.getServletContext())方法，在这个方法中实例化了Spring IOC容器。即ApplicationContext对象。
+因此，当ServletContext创建时我们可以创建applicationContext对象，当ServletContext销毁时，我们可以销毁applicationContext对象。这样applicationContext就和ServletContext“共生死了”。
