@@ -42,7 +42,63 @@ Spring支持如下两种方式的事务管理：
 
 4.Bean注入属性有哪几种方式？
 ![20170607091428631](/assets/20170607091428631_5a6pfx1li.png)
-
+* 构造器注入：
+    * 通过将@Autowired注解放在构造器上来完成构造器注入，默认构造器参数通过类型自动装配。
+        ```java
+        public class Test1 {  
+            private MessageInterface message;  
+            @Autowired //构造器注入  
+            private Test1(MessageInterface message) {  
+                this.message = message;  
+                //省略getter和setter  
+            } 
+        } 
+        ```
+    * 
+* 接口注入：
+    * 通过将@Autowired注解。
+        ```java
+        public class Test2 {  
+            @Autowired //接口注入  
+            private MessageInterface messageInterface;  
+            //省略getter和setter  
+        }
+        ```
+    *
+* 方法参数注入（setter）:
+    * 将@Autowired注解放在方法上来完成方法参数注入。
+        ```java
+        public class Test3 {  
+            private MessageInterface message;  
+        
+            @Autowired //setter方法注入  
+            public void setMessage(MessageInterface message) {  
+                this.message = message;  
+            }  
+            public String getMessage() {  
+                return message;  
+            }  
+        }
+        ```
+@Autowired注解小结：
+```
+@Autowired是一种注解，可以对成员变量、方法和构造函数进行标注，来完成自动装配的工作。
+标注在类上，则注入类的实例对象。
+标注在接口上，则注入接口的实现类。
+标注在方法上（set方法或任意方法），则自动执行当前方法，如果方法有参数，会在IOC容器中自动寻找同类型参数为其传值。
+@Autowried注解是按照类型（byType）装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它的required属性为false。如果想要按照名称（byName）来装配，可以结合@Qualifier注解一起使用。
+public class TestServiceImpl {
+    @Autowired
+    @Qualifier("userDao")
+    private UserDao userDao; 
+}
+```
+@Resource注解：
+```
+@Autowired按by type自动注入的，而@Resource默认按by name自动注入。
+@Resource有两个属性：name和type。
+k
+```
 5.讲述SpringMVC工作流程
 ![20170607104706760](/assets/20170607104706760_49e2v6ksg.jpg)
 
