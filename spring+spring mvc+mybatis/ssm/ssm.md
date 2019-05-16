@@ -186,22 +186,16 @@ Spring是一个轻量级框架，也是一个容器，Spring实质上讲就是�
 
 (7)为什么要用Spring
 • 降低对象耦合度,让代码更加清晰,提供一些常见的模版
-(8)Spring DI的几种方式
-• (1)构造器注入：通过构造方法初始化
-• <constructor-arg name="dao"</constructor-arg>
-• (2)setter注入：通过setter方法初始化注入
-• <property name="dao" ref="dao2"></property>
 
-• 注意：在实际开发中常用setter注入。
-
-(7)为什么要用Spring
-• 降低对象耦合度,让代码更加清晰,提供一些常见的模版
 (8)Spring DI的几种方式
+```
 • (1)构造器注入：通过构造方法初始化
 • <constructor-arg name="dao"</constructor-arg>
 • (2)setter注入：通过setter方法初始化注入
 • <property name="dao" ref="dao2"></property>
 • 注意：在实际开发中常用setter注入。
+```
+
 (1)SpringMvc的控制器是不是单例模式,如果是,有什么问题,怎么解决
 是单例模式,所以在多线程访问的时候有线程安全问题,不要用同步,会影响性能的,解决方案是在控制器里面不能写字段
 (2)SpingMvc中的控制器的注解
@@ -224,9 +218,10 @@ ModelAndView
 可以声明一个request,或者session先拿到session,然后就可以放入数据,或者可以在类上面加上@SessionAttributes注解,里面包含的字符串就是要放入session里面的key
 (11)SpringMvc怎么和AJAX相互调用的
 通过Jackson框架就可以把Java里面的对象直接转化成js可以识别的Json对象 具体步骤如下 :
-1.加入Jackson.jar
-2.在配置文件中配置json的映射
-3.在接受Ajax方法里面可以直接返回Object,List等,但方法前面要加上@ResponseBody注解
+1. 加入Jackson.jar
+2. 在配置文件中配置json的映射
+3. 在接受Ajax方法里面可以直接返回Object,List等,但方法前面要加上@ResponseBody注解
+
 (12)当一个方法向AJAX返回对象,譬如Object,List等,需要做什么处理
 要加上@ResponseBody注解
 (13)讲下SpringMvc的执行流程

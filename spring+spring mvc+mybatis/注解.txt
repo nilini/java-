@@ -1,0 +1,33 @@
+1、@Controller、@Service、@Component、@Repository
+2、@PostConstruct、@PreDestory
+3、@Primary
+4、@Resource
+5、@bean
+6、@Configuration
+7、@Value
+8、@Lazy
+9、@Autowired
+10、@Qualifier
+11、@Async
+12、@Named
+13、@Inject
+14、@Signleton
+16、@ResponstBody
+17、@ResponseBody
+15、@Valid 
+    @NotBlank、@NotNull、@Null、@NotEmpty
+    @AssertTrue、@AssertFalse
+    @Size、@Length
+    @Past、@Future、@Pattern
+19、@Valided
+20、@ControllerAdvice 
+21、@ExceptionHandler  
+22、@ResponseStatus
+23、@RequestMapping
+    @GetMapping @PostMapping
+24、@CrossOrigin
+25、@RequestParam @PathVariable @RequestHeader 
+   @CookieValue @RequestBody @SessionAttributes 
+   @ModelAttribute;
+26、@Scope
+27、@RestController
