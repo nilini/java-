@@ -40,7 +40,7 @@ Spring支持如下两种方式的事务管理：
 
 一般选择声明式事务管理，因为这种方式和应用程序的关联较少。
 
-4.Bean注入属性有哪几种方式？
+####4.Bean注入属性有哪几种方式？
 ![20170607091428631](/assets/20170607091428631_5a6pfx1li.png)
 * 构造器注入：
     * 通过将@Autowired注解放在构造器上来完成构造器注入，默认构造器参数通过类型自动装配。
@@ -97,24 +97,45 @@ public class TestServiceImpl {
 ```
 @Autowired按by type自动注入的，而@Resource默认按by name自动注入。
 @Resource有两个属性：name和type。
-k
+spring将name属性解析为bean的名字，而type属性则被解析为bean的类型。所以如果使用name属性，则使用byName的自动注入策略，如果使用type属性则使用byType的自动注入策略。如果都没有，则通过反射机制使用byName自动注入策略。
+@Resource依赖注入时查找bean的规则：
+    1. 既不指定name属性，也不指定type属性，则自动按byName方式进行查找。如果没有找到符合的bean，则回退为一个原始类型进行查找，如果找到就注入。
+    2. 只是指定了@Resource注解的name，则按name后的名字去bean元素里查找有与之相等的name属性的bean。
+    3. 只指定@Resource注解的type属性，则从上下文中找到类型匹配的唯一bean进行装配，找不到或者找到多个，都会抛出异常。
+    4. 既指定了@Resource的name属性又指定了type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常。
+@Resource属于spring。
 ```
-5.讲述SpringMVC工作流程
+####5.@Controller、@Service、@Respository、@Compoent
+* @Service，用于标注业务层组件（service层用这个注解）；
+* @Controller，用于标注控制层组件；
+* @Repository，用于标注数据访问组件，即DAO层组件
+* @Component，泛指组件，当组件不好归类的时候，可以用这个注解进行标注。
+####6.@ComponentScan注解和<context:component-scan>
+指定扫描路径，spring会把指定路径下带有指定注解的类自动装配到bean容器里。会被自动装配的注解包括@Controller、@Service、@Component、@Repository。
+其作用等同于<context:component-scan base-package="com.maple.learn" />配置。
+
+####7.SpringMVC开发中的IoC容器
+* web容器会提供一个全局的上下文：ServletContect，为后面Spring IOC容器提供宿主环境。
+* 监听器contextLoaderListener会初始化一个根上下文：WebApplicationContext，就是Spring的IoC容器，Spring会将它存储到ServletContext，可供后面获取到该IOC容器中的bean。
+* contextLoaderListener监听其初始化完毕后，开始初始化web.xml中配置的Servlet，Servlet可以配置多个。比如：DispatcherServlet。DispatcherServlet上下文在初始化的时候会建立自己的IoC上下文，用以持有spring mvc相关的bean。并将根IoC容器设置为父容器。然后保存到ServletContext中。
+* 重复bean
+![QQ截图20190516102326](/assets/QQ截图20190516102326.png)
+####8.讲述SpringMVC工作流程
 ![20170607104706760](/assets/20170607104706760_49e2v6ksg.jpg)
 
 
 流程 
-1、用户发送请求至前端控制器DispatcherServlet 
-2、DispatcherServlet收到请求调用HandlerMapping处理器映射器。 
-3、处理器映射器找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet。 
-4、DispatcherServlet调用HandlerAdapter处理器适配器 
-5、HandlerAdapter经过适配调用具体的处理器(Controller，也叫后端控制器)。 
-6、Controller执行完成返回ModelAndView 
-7、HandlerAdapter将controller执行结果ModelAndView返回给DispatcherServlet 
-8、DispatcherServlet将ModelAndView传给ViewReslover视图解析器 
-9、ViewReslover解析后返回具体View 
-10、DispatcherServlet根据View进行渲染视图（即将模型数据填充至视图中）。 
-11、DispatcherServlet响应用户
+1. 用户发送请求至前端控制器DispatcherServlet 
+2. DispatcherServlet收到请求调用HandlerMapping处理器映射器。 
+3. 处理器映射器找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet。 
+4. DispatcherServlet调用HandlerAdapter处理器适配器 
+5. HandlerAdapter经过适配调用具体的处理器(Controller，也叫后端控制器)。 
+6. Controller执行完成返回ModelAndView 
+7. HandlerAdapter将controller执行结果ModelAndView返回给DispatcherServlet 
+8. DispatcherServlet将ModelAndView传给ViewReslover视图解析器 
+9. ViewReslover解析后返回具体View 
+10. DispatcherServlet根据View进行渲染视图（即将模型数据填充至视图中）。 
+11. DispatcherServlet响应用户
 
 
 

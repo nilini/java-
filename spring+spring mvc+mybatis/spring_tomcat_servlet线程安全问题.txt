@@ -1,0 +1,22 @@
+servlet的多线程机制
+当Tomcat接收到Client的HTTP请求时，Tomcat从线程池中取出一个线程，之后找到该请求对应的Servlet对象。
+如果该Servlet还未被请求过，那么将进行Servlet初始化并调用Servlet并调用service()方法。
+否则，直接调用service()方法。要注意的是每一个Servlet对象再Tomcat容器中只有一个实例对象，即是单例模式。
+如果多个HTTP请求请求的是同一个Servlet，那么着两个HTTP请求对应的线程将并发调用Servlet的service()方法。
+
+这时候，如果在Servlet中定义了实例变量或静态变量，那么可能会发生线程安全问题（因为所有的线程都可能使用这些变量）。
+
+spring mvc线程安全吗
+Spring使用IoC来管理bean，默认单例。不是线程安全的。
+
+如何解决spring mvc线程安全问题
+1、不设置实例变量、静态变量。
+2、如果使用了实例变量或静态变量，则要同步。
+
+实例：
+public class UserController {
+    @AutoWired
+    private UserService userService;
+}
+
+UserService不管安不安全，只要在UserController之调用UserService的方法就没线程安全问题，并且UserController中不能修改实例变量userService
