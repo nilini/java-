@@ -201,7 +201,7 @@ Spring是一个轻量级框架，也是一个容器，Spring实质上讲就是�
 (2)SpingMvc中的控制器的注解
 @Controller 注解：该注解表明该类扮演控制器的角色，Spring不需要你继承任何其他控制器基类或引用Servlet API。
 (3)@RequestMapping注解用在类上面有什么作用
-该注解是用来映射一个URL到一个类或一个特定的方处理法上。
+    该注解是用来映射一个URL到一个类或一个特定的方处理法上。
 (4) 我想在拦截的方法里面得到从前台传入的参数,怎么得到
 直接在形参里面声明这个参数就可以,但必须名字和传过来的参数一样
 (5)如果前台有很多个参数传入,并且这些参数都是一个对象的,那么怎么样快速得到这个对象
@@ -224,29 +224,58 @@ ModelAndView
 
 (12)当一个方法向AJAX返回对象,譬如Object,List等,需要做什么处理
 要加上@ResponseBody注解
+
 (13)讲下SpringMvc的执行流程
 系统启动的时候根据配置文件创建spring的容器, 首先是发送http请求到核心控制器DispatcherServlet，spring容器通过映射器去寻找业务控制器，
 使用适配器找到相应的业务类，在进业务类时进行数据封装，在封装前可能会涉及到类型转换，执行完业务类后使用ModelAndView进行视图转发，
 数据放在model中，用map传递数据进行页面显示。
+
 (1)什么是MyBatis的接口绑定,有什么好处
 接口映射就是在IBatis中任意定义接口,然后把接口里面的方法和SQL语句绑定,我们直接调用接口方法就可以,这样比起原来了SqlSession提供的方法我们可以有更加灵活的选择和设置.
+
 (2)什么情况下用注解绑定,什么情况下用xml绑定
 当Sql语句比较简单时候,用注解绑定,当SQL语句比较复杂时候,用xml绑定,一般用xml绑定的比较多
+
 (3)如果要查询的表名和返回的实体Bean对象不一致,那你是怎么处理的?
-在MyBatis里面最主要最灵活的的一个映射对象的ResultMap,在它里面可以映射键值对, 默认里面有id节点,result节点,它可以映射表里面的列名和对象里面的字段名. 并且在一对一,一对多的情况下结果集也一定要用ResultMap
+在MyBatis里面最主要最灵活的的一个映射对象的ResultMap,在它里面可以映射键值对, 默认里面有id节点,result节点,它可以映射表里面的列名和对象里面的字段名. 并且在一对一,一对多的情况下结果集也一定要用ResultMap。
+```xml
+<!-- ResultMap -->
+<resultMap id="BasePlusResultMap" type="com.meikai.shop.entity.TShopSku">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SKU_NAME" jdbcType="VARCHAR" property="skuName" />
+    <result column="CATEGORY_ID" jdbcType="BIGINT" property="categoryId" />
+    <collection property="attributes" ofType="com.meikai.shop.entity.TShopAttribute" > 
+        <id column="AttributeID" jdbcType="BIGINT" property="id" />
+        <result column="attribute_NAME" jdbcType="VARCHAR" property="attributeName" />
+    </collection>
+</resultMap>
+<!-- 查询语句 -->
+<select id="getById"  resultMap="basePlusResultMap">
+    select s.ID,s.SKU_NAME,s.CATEGORY_ID,a.ID,a.ATTRIBUTE_NAME
+    from t_shop_sku s,t_shop_attribute a 
+    where s.ID =a.SKU_ID and s.ID = #{id,jdbcType =BIGINT};
+</select>
+
+```
+
 (4)MyBatis在核心处理类叫什么
 MyBatis里面的核心处理类叫做SqlSession
+
 (5)讲下MyBatis的缓存
-MyBatis的缓存分为一级缓存和二级缓存,一级缓存放在session里面,默认就有,二级缓存放在它的命名空间里,
+MyBatis的缓存分为一级缓存和二级缓存
+一级缓存放在session里面,默认就有,二级缓存放在它的命名空间里,
 默认是打开的,使用二级缓存属性类需要实现Serializable序列化接口(可用来保存对象的状态),可在它的映射文件中配置<cache/>
+
 (6)MyBatis(IBatis)的好处是什么
 ibatis把sql语句从Java源程序中独立出来，放在单独的XML文件中编写，给程序的
 维护带来了很大便利。
 ibatis封装了底层JDBC API的调用细节，并能自动将结果集转换成JavaBean对象，大大简化了Java数据库编程的重复工作。
 因为Ibatis需要程序员自己去编写sql语句，程序员可以结合数据库自身的特点灵活控制sql语句，
 因此能够实现比hibernate等全自动orm框架更高的查询效率，能够完成复杂查询。
+
 (7)MyBatis怎么配置一对多？
 一对多的关系 ：property: 指的是集合属性的值, ofType：指的是集合中元素的类型
+
 (8)MyBatis怎样配置多对一？
 多对一的关系：property: 指的是属性的值, javaType：指的是属性的类型
 

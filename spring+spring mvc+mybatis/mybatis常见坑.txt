@@ -1,0 +1,15 @@
+1、sql不能加分号。
+2、数据库的时间为DATE类型时，Mybatis的jdbcType应该使用jdbcType=DATE，而不是使用jdbcType=TIMESTAMP
+<mapper namespace="">
+    <resultMap>
+        <!-- yyyy-MM-dd -->
+        <result property="binDate" javaType="java.util.Date" jdbcType="DATE"></result>
+        <!-- yyyy-MM-dd HH:mm:ss -->
+        <result property="binDate" javaType="java.util.Date" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+</mapper>
+3、Mybatis中在查询进行select映射的时候，返回类型可以用resultType，也可以用resultMap。
+resultType是直接表示返回类型，而resultMap则是对外部ResultMap的引用，resultType和resultMap不能同时存在。
+4、org.apache.ibatis.binding.BindingException: Invalid bound statement (not found) 异常。
+namespace、resultMap中的Type、resultType、xml配置文件错误、包名结构或路径等错误。
+
