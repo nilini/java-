@@ -31,3 +31,5 @@
    @ModelAttribute;
 26、@Scope
 27、@RestController
+28、@Cacheable
+29、@CacheEvict
