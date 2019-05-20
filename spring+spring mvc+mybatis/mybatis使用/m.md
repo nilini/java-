@@ -129,5 +129,71 @@ bind 元素可以从 OGNL 表达式中创建一个变量并将其绑定到上下
 ```xml
 * id 在命名空间中唯一的标识符，可以被用来引用这条语句。
 * paramterType 将会传入这条语句的参数类的完全限定名或别名。这个属性是可选的，因为 MyBatis 可以通过类型处理器（TypeHandler） 推断出具体传入语句的参数，默认值为未设置（unset）。
+* resultType 返回期望类型的类的完全限定名或别名。如果返回的是集合，应该设置为集合包含的类型，而不是集合本身。resultType和resultMap不能同时使用。
+* resultMap 外部resultMap的命名引用。
+* flushCache 设置为true后，只要语句被调用，都会导致本地缓存和二级缓存被清空。默认false。
+* useCache 设置为true后，将会导致本条语句的结果被二级缓存缓存起来。默认：对select元素为true。
+* timeout 设个设置是在抛出异常之前，驱动程序等待数据库返回请求结果的描述。默认值为未设置（unset）(依赖驱动)。
+* fetchSize 尝试让驱动程序每次批量返回的结果行数和这个设置值相等。默认为设置（unset）(依赖驱动)。
+* statementType	STATEMENT，PREPARED 或 CALLABLE 中的一个。这会让 MyBatis 分别使用 Statement，PreparedStatement 或 CallableStatement，默认值：PREPARED。
+* resultSetType	FORWARD_ONLY，SCROLL_SENSITIVE, SCROLL_INSENSITIVE 或 DEFAULT（等价于 unset） 中的一个，默认值为 unset （依赖驱动）。
+* databaseId	如果配置了数据库厂商标识（databaseIdProvider），MyBatis 会加载所有的不带 databaseId 或匹配当前 databaseId 的语句；如果带或者不带的语句都有，则不带的会被忽略。
+* resultOrdered	这个设置仅针对嵌套结果 select 语句适用：如果为 true，就是假设包含了嵌套结果集或是分组，这样的话当返回一个主结果行的时候，就不会发生有对前面结果集的引用的情况。 这就使得在获取嵌套的结果集的时候不至于导致内存不够用。默认值：false。
+* resultSets	这个设置仅对多结果集的情况适用。它将列出语句执行后返回的结果集并给每个结果集一个名称，名称是逗号分隔的。
+```
+
+#####id：
+* xml（mapper）文件的namespace关联接口名。
+  ```xml
+  <mapper namespace="com.pgy.dao.UserDao">
+    <select id="select" resultType="User">
+        SELECT id,ch_name,name,group_id from sys_user
+    </select>
+  </mapper>
+  ```
+* 接口
+```java
+public interface UserDao {
+
+    /**
+     * 根据查询条件查询用户列表
+     * @param user 查询条件
+     * @return 用户列表
+     */
+    List<User> select(User user);
+}
 
 ```
+使用
+```java
+List<User> list = userDao.select(user);
+```
+######paramterType:
+```xml
+<delete id="deleteId" parameterType="Integer">
+<insert id="addEmp" parameterType="com.entity.Employee">
+<!-- 下面是paremeterType是Map（map.put("id", 3)），resultType返回值是List<Teacher> -->
+<select id="selectTeacher" parameterType="Map" resultType="com.entity.Teacher">
+  select * from Teacher where id = #{id} 
+</select>
+```
+######resultMap:
+```xml
+<resultMap type="org.apache.ibatis.submitted.rounding.User" id="usermap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="funkyNumber" property="funkyNumber"/>
+		<result column="roundingMode" property="roundingMode"/>
+</resultMap>
+<select id="getUser" resultMap="usermap">
+		select * from users
+</select>
+```
+######flushCache:
+一级缓存是SqlSession级别的缓存, 一个SqlSession结束后该SqlSession中的一级缓存也就不存在了, 不同的SqlSession之间的缓存数据区域是互不影响的.
+二级缓存是Mapper级别的缓存, 跨SqlSession, 共享域是mapper的同一个namespace, 默认没开启,需要在setting全局配置中开启.
+
+databaseId:
+<select id="qryAllUserInfo" databaseId="oracle" parameterType="****" >
+    select * from sys_user
+</select>
