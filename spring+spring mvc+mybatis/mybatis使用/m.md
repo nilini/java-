@@ -190,9 +190,31 @@ List<User> list = userDao.select(user);
 </select>
 ```
 ######flushCache:
-一级缓存是SqlSession级别的缓存, 一个SqlSession结束后该SqlSession中的一级缓存也就不存在了, 不同的SqlSession之间的缓存数据区域是互不影响的.
-二级缓存是Mapper级别的缓存, 跨SqlSession, 共享域是mapper的同一个namespace, 默认没开启,需要在setting全局配置中开启.
+*  一级缓存是SqlSession级别的缓存, 一个SqlSession结束后该SqlSession中的一级缓存也就不存在了, 不同的SqlSession之间的缓存数据区域是互不影响的.
+* 二级缓存是Mapper级别的缓存, 跨SqlSession, 共享域是mapper的同一个namespace, 默认没开启,需要在setting全局配置中开启.
+######useCache:
+* 当为select语句时：
+  flushCache默认为false，表示任何时候语句被调用，都不会去清空本地缓存和二级缓存。
+  useCache默认为true，表示会将本条语句的结果进行二级缓存。
 
+  当为insert、update、delete语句时：
+  flushCache默认为true，表示任何时候语句被调用，都会导致本地缓存和二级缓存被清空。
+  useCache属性在该情况下没有。
+######timeout:
+```xml 
+  <!-- 配置文件中全局设置超时。sql执行时间超过300秒时，报错（Statement cancelled due to timeout or client request） -->
+  <configuration>
+    <settings>
+        <setting name="defaultStatementTimeout" value="300" />
+    </settings>
+  </configuration>
+  <!-- 映射文件中设置，有些sql需要长时间执行。 -->
+  <select id="queryList" parameterType="hashmap" timeout="10000">
+```
+######fetchSize
+```xml
+
+```
 databaseId:
 <select id="qryAllUserInfo" databaseId="oracle" parameterType="****" >
     select * from sys_user
