@@ -212,9 +212,31 @@ List<User> list = userDao.select(user);
   <select id="queryList" parameterType="hashmap" timeout="10000">
 ```
 ######fetchSize
-```xml
+* 尝试让驱动每次批量返回的结果行数和这个设置值相等。
+* Mysql不支持fetchsize，默认为一次性取出所有数据，所以容易OOM。
+* Oracle支持。
 
+######statementType
+设置使用什么对象操作sql语句。
+* STATEMENT：直接操作sql，不进行预编译，获取数据：Statement
+* PREPARED（默认）：预处理，先预编译。获取数据：PreparedStatement
+* CALLABLE：执行存储过程，CallableStatement
+```xml
+<update id="update4" statementType="STATEMENT">
+    update tb_car set price=${price} where id=${id}
+</update>
+
+<update id="update5" statementType="PREPARED">
+    update tb_car set xh=#{xh} where id=#{id}
+</update>
+
+<!--存储过程-->
+<select id="getUserCount" parameterMap="getUserCountMap" statementType="CALLABLE">
+    CALL mybatis.ges_user_count(?,?)
+</select>
 ```
+######resultSetType
+
 databaseId:
 <select id="qryAllUserInfo" databaseId="oracle" parameterType="****" >
     select * from sys_user
