@@ -236,8 +236,94 @@ List<User> list = userDao.select(user);
 </select>
 ```
 ######resultSetType
+* jdbc中resultSetType的可选值有：ResultSet.TYPE_FORWARD_ONLY、ResultType.TYPE_SCROLL_INSENSITIVE、ResultSet.TYPE_SCROLL_SENSITIVE
+* ResultSet.TYPE_FORWORD_ONLY
+  默认的cursor类型，仅仅支持结果集forword，不支持backforward、random、last、first等操作。
+* ResultSet.TYPE_SCROLL_INSENSITIVE
+  支持结果集backforward，random，last，first等操作。对其它session对数据库中数据做出的更改是不敏感的。
+  实现方法：从数据库取出数据后，会把全部数据缓存到cache中，对结果集的后续操作，是操作的cache中的数据，数据库中记录发生变化后，不影响cache中的数据，
+* ResultSet.TYPE_SCROLL_SENSITIVE
+  支持结果集backforward、random、last、first等操作，对其它session对数据库中数据做出的更改是敏感的，即其他session修改了数据库中的数据，会反应到本结果集中。
+  实现方法：从数据库取出数据后，不是把全部数据缓存到cache中，而是把每条数据逇rowid缓存到cache中，对结果集后续操作时，是根据rowid再去数据库中去数据。所以数据库
+  中记录发生变化后，通过ResultSet取出的记录是最新的，即ResultSet是SENSITIVE的。但insert和delete操作不会影响到ResultSet，因为insert数据的rowid不在ResultSet
+  取出的rowid中，所以insert的数据对ReultSet是不可见的，而delete数据的rowid依旧在ResultSet中，所以ResultSet仍可以取出被删除的记录（因为一般数据库删除是标记删除，不是真正在数据库文件中删除）。
+* mysql不支持。(https://blog.csdn.net/iteye_9083/article/details/82612479)
+  ```java
+  DatabaseMetaData dbMeta = connection.getMetaData();
+  System.out.println(dbMeta.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE)); //false
+  ```
+######resultSets
+某些数据库（mysql可以）允许存储过程返回多个结果集，或一次性执行多个语句，每个语句返回一个结果集。这样就可以在不使用连接的情况下，只访问数据库一次就能获得相关数据。
+```xml
+SELECT * FROM BLOG WHERE ID = #{id}
+SELECT * FROM AUTHOR WHERE ID = #{id}
 
+<select id="selectBlog" resultSets="blogs,authors" resultMap="blogResult" statementType="CALLABLE">
+  {call getBlogsAndAuthors(#{id,jdbcType=INTEGER,mode=IN})}
+</select>
+
+<resultMap id="blogResult" type="Blog">
+  <id property="id" column="id" />
+  <result property="title" column="title"/>
+  <association property="author" javaType="Author" resultSet="authors" column="author_id" foreignColumn="id">
+    <id property="id" column="id"/>
+    <result property="username" column="username"/>
+    <result property="password" column="password"/>
+    <result property="email" column="email"/>
+    <result property="bio" column="bio"/>
+  </association>
+</resultMap>
+```
 databaseId:
 <select id="qryAllUserInfo" databaseId="oracle" parameterType="****" >
     select * from sys_user
 </select>
+
+####insert
+```xml
+<insert id="insertAuthor" parameterType="domain.blog.Author" flushCache="true" statementType="PREPARED" keyProperty="" keyColumn="" useGeneratedKeys="" timeout="20">
+<update id="updateAuthor" parameterType="domain.blog.Author" flushCache="true" statementType="PREPARED" timeout="20">
+<delete id="deleteAuthor" parameterType="domain.blog.Author" flushCache="true" statementType="PREPARED" timeout="20">
+```
+######useGeneratedKeys和keyProperty
+useGeneratedKeys仅对insert和update有用，这会令MyBatis使用JDBC的getGeneratedKeys方法取出由数据库内部生成的主键。默认false。
+keyProperty仅对insert和update有用。
+```xml
+<!-- 自动生成主键id -->
+<insert id="insertAuthor" useGeneratedKeys="true"
+    keyProperty="id">
+  insert into Author (username, password, email, bio) values
+  <foreach item="item" collection="list" separator=",">
+    (#{item.username}, #{item.password}, #{item.email}, #{item.bio})
+  </foreach>
+</insert>
+
+<!-- 对于不支持自动生成类型的数据库或可能不支持自动生成键的JDBC驱动，mybatis还可以使用<selectKey>。将主键放到一个表中，然后使用<selectKey>取出一个记录。但引入更多问题，比如主键表空了怎么办。 -->
+<insert id="insertAuthor">
+  <selectKey keyProperty="id" resultType="int" order="BEFORE">
+    select CAST(RANDOM()*1000000 as INTEGER) a from SYSIBM.SYSDUMMY1
+  </selectKey>
+  insert into Author
+    (id, username, password, email,bio, favourite_section)
+  values
+    (#{id}, #{username}, #{password}, #{email}, #{bio}, #{favouriteSection,jdbcType=VARCHAR})
+</insert>
+```
+######order:
+这可以被设置为 BEFORE 或 AFTER。如果设置为 BEFORE，那么它会首先生成主键，设置 keyProperty 然后执行插入语句。如果设置为 AFTER，那么先执行插入语句，然后是 selectKey 中的语句 - 这和 Oracle 数据库的行为相似，在插入语句内部可能有嵌入索引调用。
+
+####sql片段
+定义可重用的SQL代码段，这些SQL代码可以被包含在其他语句中。
+```xml
+<!-- sql片段 -->
+<sql id="userColumns"> ${alias}.id,${alias}.username,${alias}.password </sql>
+<!-- 使用 -->
+<select id="selectUsers" resultType="map">
+  select
+    <include refid="userColumns"><property name="alias" value="t1"/></include>,
+    <include refid="userColumns"><property name="alias" value="t2"/></include>
+  from some_table t1
+    cross join some_table t2
+</select>
+```
+sql中也可嵌套include。
