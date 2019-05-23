@@ -174,5 +174,38 @@
       7. timeout-execution线程创建一个和statement配置相同的connection 
       8. 使用新创建的connection向超时query发送cancel query（KILL QUERY “connectionId”） 
       ```
+    * defaultFetchSize 为驱动的结果集获取数量（fetchSize）设置一个提示值。此参数可以在查询设置中被覆盖。
+      ```xml
+      mysql不支持fethsize, 会一次取出所有数据到客户端内存中。数据量较大时可能会出现JVM OOM。
+      解决办法：
+      1、当statement设置以下属性时，采用的时流数据接收方式，每次只从服务器接收部分数据，直到所有数据处理完。
+        setResultSetType(ResultSet.TYPE_FORWARD_ONLY);
+        setFetchSize(Integer.MIN_VALUE);
+      2、调用statement的enableStreamingResults方法，实际上enableStreamingResults方法内部封装的就是第一种方式。
+      3、设置连接属性useCursorFetch = true（5.0版驱动开始支持），statement以TYPE_FORWARD_ONLY打开，再设置fetch size参数，表示采用服务器端游标，每次从服务器取fetch_size条数据。 
+      ```
+      ```
+      Oracle/DB2都有方便的游标机制。
+      Mysql的Stream方式有2种，Client Side Cursor 和 Server Side Cursor，JDBC默认的方式是Client Side Cursor，
+      即全部读取到Client Side后再处理。
+      1、Client Side
+      public void enableStreamingResults() throws SQLException {
+          synchronized (checkClosed().getConnectionMutex()) {
+              this.originalResultSetType = this.resultSetType;
+              this.originalFetchSize = this.fetchSize;
+              setFetchSize(Integer.MIN_VALUE);
+              setResultSetType(ResultSet.TYPE_FORWARD_ONLY);
+          }
+      }
+      mysql本身并没有FetchSize方法，它是通过使用CS阻塞方式的网络流控制实现服务端不会一下发送大量数据到客户端。
+      会造成问题：如果没有全部读取完ResultSet的结果再执行其他sql，那么将会影响连接的缓存，所以这种方式要求要么读取完
+      ResultSet中的全部数据，要么需要自己调用ResultSet.close()方法。
 
-      https://blog.csdn.net/gladmustang/article/details/41407851
+      MyBatis中需要如下设置：
+      <select id="findAllRoles" fetchSize="-2147483648" resultType="chenlong.mybatislearn.db.struct.Role">
+        SELECT * FROM role
+      </select>
+
+      2、Server Side Cursor
+        <property name="url" value="jdbc:mysql://localhost:3008/mybatislearn?autoReconnect=true&amp;useCursorFetch=true"/>
+      ```
