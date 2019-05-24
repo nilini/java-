@@ -174,7 +174,7 @@
       7. timeout-execution线程创建一个和statement配置相同的connection 
       8. 使用新创建的connection向超时query发送cancel query（KILL QUERY “connectionId”） 
       ```
-    * defaultFetchSize 为驱动的结果集获取数量（fetchSize）设置一个提示值。此参数可以在查询设置中被覆盖。
+* defaultFetchSize 为驱动的结果集获取数量（fetchSize）设置一个提示值。此参数可以在查询设置中被覆盖。
       ```xml
       mysql不支持fethsize, 会一次取出所有数据到客户端内存中。数据量较大时可能会出现JVM OOM。
       解决办法：
@@ -209,3 +209,57 @@
       2、Server Side Cursor
         <property name="url" value="jdbc:mysql://localhost:3008/mybatislearn?autoReconnect=true&amp;useCursorFetch=true"/>
       ```
+>>safeResultHandlerEnabled 	允许在嵌套语句中使用分页（ResultHandler）。如果允许使用则设置为 false。 
+>>safeResultHandlerEnabled 	允许在嵌套语句中使用分页（ResultHandler）。如果允许使用则设置为 false。
+* mapUnderscoreToCamelCase 是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。默认false。
+* localCacheScope MyBatis 利用本地缓存机制（Local Cache）防止循环引用（circular references）和加速重复嵌套查询。 默认值为 SESSION，这种情况下会缓存一个会话中执行的所有查询。 若设置值为 STATEMENT，本地会话仅用在语句执行上，对相同 SqlSession 的不同调用将不会共享数据。
+* jdbcTypeForNull 当没有为参数提供特定的JDBC类型时，为空值指定JDBC类型。某些驱动需要指定列的JDBC类型，多数情况下直接用一般类型即可，比如NULL、VARCHAR或OTHER。
+* lazyLoadTriggerMethods 指定哪个对象的方法触发一次延迟加载。 值：用逗号分割的方法列表。 默认：equals、clone、hashCode、toString
+      ```xml
+      <!-- 调用doLazyLoadingNow()触发懒加载。 -->
+      <setting  name="lazyLoadTriggerMethods" value="doLazyLoadingNow,equals,clone,hashCode,toString" />
+      ```
+* defaultScriptingLanguage 指定动态sql生成的默认语言。 值：一个类型别名或完全限定名。 默认值：org.apache.ibatis.scripting.xmltags.XMLLanguageDriver
+  ```xml
+  <!-- 自定义sql解析 -->
+  <typeAliases>
+    <typeAlias type="org.sample.MyLanguageDriver" alias="myLanguage"/>
+  </typeAliases>
+  <settings>
+    <setting name="defaultScriptingLanguage" value="myLanguage"/>
+  </settings>
+  ```
+* defaultEnumTypeHandler 指定Enum使用的默认 TypeHandler。值：一个类型别名或完全限定名。 默认值：org.apache.ibatis.type.EnumTypeHandler
+  * 无论是Mybatis在预处理语句中设置一个参数时，还是从结果集中取出一个值时，都会用类型处理器将获取的值以合适的方式转换成java类型。MyBatis默认为我们实现了许多TypeHandler,当没有配置指定TypeHandler时，MyBatis会根据参数或返回结果的不同，默认为我们选择合适的TypeHandler处理。
+  * 对于enum而言，在MyBatis中已经存在EnumTypeHandler和EnumOrdinalTypeHandler两大处理器，他们都继承自BaseTypeHandler处理器。
+  * EnumTypeHandler存入数据库的是枚举的name，EnumOrdinalTypeHandler存入数据库的是枚举的位置。
+    ```java
+    //例如下方的枚举，当我们有一个枚举值是EStatus.init时，这时我们使用mybatis EnumTypeHandler存入数据库的是"init"字符串；而EnumOrdinalTypeHandler存入的是3,因为init是第四个值，第一个值disable的index是0。
+    public enum EStatus {
+      disable("0"), enable("1"), deleted("2"),
+      init("10"), start("11"), wait("12"), end("13");
+    }
+    ```
+    ```xml
+    <typeHandlers>
+      <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.foo.ProcessStatus"/>
+    </typeHandlers>
+    ```
+    混合使用
+    ```xml
+    <insert id="insert" parameterType="com.foo.Process">
+      insert into process (id, name, status)
+      values (#{id}, #{name}, #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler})
+    </insert>
+    <!-- 或 -->
+    <resultMap id="processMap" type="com.foo.Process">
+        <id column="id" property="id"/>
+        <id column="name" property="name"/>
+        <id column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+    </resultMap>
+        
+    <select id="findById" resultMap="processMap">
+        select * FROM process WHERE id=#{id}
+    </select>
+    ```
+    自定义枚举handler:https://segmentfault.com/a/1190000012564028
