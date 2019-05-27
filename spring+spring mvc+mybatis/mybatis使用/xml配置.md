@@ -263,3 +263,12 @@
     </select>
     ```
     自定义枚举handler:https://segmentfault.com/a/1190000012564028
+
+* callSettersOnNulls
+  * mybatis会忽略掉值为null的字段。这样就造成取参数时报空指针异常的情况。如果设置了这条属性之后，mybatis就不会忽略这些字段，你依然能get到这些key，只不过value为null，这样也方便。
+  * 问题：1、如果整个查询的所有字段都没有值，也就是查询到0条记录时，则接受到的map是一个所有key都是null的map，而不是一个为null的map。
+  * 问题：2、如果只查询一个字段，而用map接收，而此时为null，则会接收到一个为null的map。默认false。
+* returnInstanceForEmptyRow
+  当返回行的所有列都是空时，MyBatis默认返回null。开启后，MyBatis会返回一个空实例。
+* logPrefix 指定MyBatis增加到日志名称的前缀。
+* logImpl 指定MyBatis所用日志的具体实现，未指定指定时将自动查找。
