@@ -1,0 +1,79 @@
+1、两种消息模式
+    点对点(queue)和订阅(topic)。
+
+2、点对点模式
+    使用队列，可以多个发送端，多个接收端，一条消息只会被一个接收端接收到。
+
+3、订阅模式
+    可以有多个发送端和多个接收端，所有的接收端都可以接收到消息。消息发出后必须有接收端在线，否则消息就丢失了。
+
+4、保证消息的成功处理
+    AUTO_ACKNOWLEDGE 模式。
+    session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
+    当消息发送给接收端之后，就自动确认成功了，一旦确认成功后，就会把队列里面的消息给清除掉，避免下一个接收端接收到同样的消息。
+    
+    CLIENT_ACKNOWLEDGE 模式。
+    session = connection.createSession();
+    如果接收端不确认消息，那么ActiveMQ就会将这条消息一直保留，知道有一个接收端确定了消息。
+    在接收端接收到消息的时候，调用javax.jms.Message的acknowledge方法：message.acknowledge();
+    这样，当消息处理成功之后，确认消息，如果不确定，activemq将会发给下一个接收端处理。
+    只在点对点中有效，订阅模式，即使不确认，也不会保存消息。
+
+5、主动接收消息
+    设置监听器，监听消息的传递，只要有消息就会即时传递到程序中。
+    但是，这样的处理，在高并发的时候，由于是被动接收，并没有考虑到程序的处理能力，可能会压垮系统。
+    可设置主动接收消息：
+        if(当程序有能力处理){//当程序有能力处理时接收
+            Message receive = consumer.receive();
+　　　　     //这个可以设置超时时间，超过则不等待消息　
+　　　　     recieve.receive(10000);
+            //其实receive是一个阻塞式方法，一定会拿到值的
+            if(null != receive){
+                String text = ((TextMessage)receive).getText();
+                receive.acknowledge();
+                System.out.println(text);
+            }else{
+                //没有值嘛
+                //
+            }
+        }
+6、消息有效期
+    可以设置消息有效期。
+    过期的消息会从队列中清除，并存储到ActiveMQ.DLQ这个队列里面。
+
+7、三种持久化
+    1、基于KahaDB的消息存储方式，默认存储方式，提供了容量的提升和恢复能力。
+    2、关系型数据库存储方案。
+    3、LevelDB存储方案
+
+8、KahaDB消息存储的配置方式
+    https://www.cnblogs.com/hapjin/p/5674257.html
+    https://blog.csdn.net/u014066037/article/details/80349831
+    
+    KahaDB存储配置的配置在conf/activemq.xml
+    <broker brokerName="broker" ... >
+        <persistenceAdapter>
+            <kahaDB directory="${activemq.data}/kahadb" journalMaxFileLength="100mb"/>
+        </persistenceAdapter>
+        ...
+    </broker> 
+
+    文件：
+    1、db.data
+        消息的索引文件。本质上是B-Tree的实现，使用B-Tree作为索引指向db-*.log里面存储的消息。
+    2、db.redo
+        主要用来进行消息恢复
+    3、db-*.log
+        存储消息的内容，对于一个消息而言，不仅仅有消息本身的数据，而且还有（Destinations、订阅关系、事务...）
+        data log以日志形式存储消息，而且新的数据总是以APPEND的方式追加到日志文件末尾。因此，消息的存储是很快的。
+        比如，对于持久化消息，Producer把消息发送给Broker，Broker先把消息存储到磁盘中(enableJournalDiskSyncs配置选项)，然后再向Producer返回Acknowledge。
+        Append方式在一定程度上减少了Broker向Producer返回Acknowledge的时间。
+    4、lock文件
+
+9、关系型数据库存储方案
+    通过JDBC实现的数据库连接，持久化到数据库。
+
+10、LevelDB存储方案
+    LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库，由Google发起并开源。
+    LevelDB只能由本操作系统的其他进程调用，所以它不具有网络性。
+    如果您需要网络上的远程进程操作LevelDB，那么就要自行封装服务层。
