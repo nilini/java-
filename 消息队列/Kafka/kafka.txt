@@ -31,3 +31,21 @@
         * 增加了容错性和可拓展性。
 
 4、Kafka基本结构
+
+5、应用场景
+    * 消息队列
+    * 行为追踪
+    * 元信息监控
+    * 日志收集
+    * 流处理
+    * 事件源
+    * 持久化日志
+6、高级特性
+    * 消息事务
+    * 零拷贝
+7、生产者事务和幂等
+    * 生产者幂等性
+        引入目的：生产者重复生产消息，生产者进行retry会产生重试，会重复产生消息。有了幂等性之后，在进行retry重试时，只会生成一个消息。
+        实现：PID（Producer ID）和Sequence Number。
+            PID: 每个新的Producer在初始化的时候会被分配一个唯一的PID，这个PID对用户是不可见的。
+            Sequence Number: 对于每个PID，该Producer发送数据的每个<Topic, Partition>都对应一个从0开始单调递增的Sequence Number。
