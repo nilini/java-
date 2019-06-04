@@ -59,3 +59,6 @@
             PID: 每个新的Producer在初始化的时候会被分配一个唯一的PID，这个PID对用户是不可见的。
             Sequence Number: 对于每个PID，该Producer发送数据的每个<Topic, Partition>都对应一个从0开始单调递增的Sequence Number。
             ![20170607091428631](/assets/2.png)
+
+
+            http://kafka.apachecn.org/documentation.html#introduction
