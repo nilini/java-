@@ -1,0 +1,19 @@
+1、日志采集Agent 
+    采集日志
+2、数据源
+    文本文件、网络接收的日志数据、通过共享内存的方式
+3、日志采集主流
+    Fluentd、Logstash、Flume、scribe等
+4、实现日志采集Agent
+    tail -f命令，对应Fluentd就是in_tail插件。
+5、发现文件
+    轮询和Inotify。
+    Linux内核给我们提供了高效的Inotify的机制，由内核来监测一个目录下文件的变化，然后通过事件的方式通知用户。但是别高兴的太早，Inotify并没有我们想的那么好，它存在一些问题，首先并不是所有的文件系统都支持Inotify，此外它不支持递归的目录监测
+6、点位文件高可用
+    Linux内核给我们提供了原子的rename。一个文件可以原子的rename成另外一个文件，利用这个特性可以保证点位文件的高可用。
+    
+    整个更新的过程如下：
+    将点位数据写入到磁盘的offset.bak文件中
+    fdatasync确保数据写入到磁盘
+    通过rename系统调用将offset.bak更名为offset
+7、
