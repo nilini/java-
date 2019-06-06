@@ -81,3 +81,15 @@ Kafka的信息复制确保了任何已发布的消息不会丢失，并且可以
 在大多数队列系统中，作为生产者的类无法做到这一点，它的作用是触发并忘记消息。broker将完成剩下的工作，比如使用id进行适当的元数据处理、偏移量等。
 
 作为消息的用户，你可以从Kafka broker中获得补偿。如果你注视SimpleConsumer类，你会注意到它会获取包括偏移量作为列表的MultiFetchResponse对象。此外，当你对Kafka消息进行迭代时，你会拥有包括偏移量和消息发送的MessageAndOffset对象。
+
+15、Zookeeper在kafka中的作用？
+    *1 broker 注册
+      broker是分布式部署并且相互之间独立，但是需要有一个注册中心能够将整个集群中的broker管理起来。
+      Zookeeper上有个专门用来记录broker服务器列表的节点："/brokers/ids"（/brokers/ids/[0...N]）。
+      kafka使用了全局唯一的数字来指代每个broker服务器，不同的broker必须使用不同的broker id进行注册，创建完节点后，每个broker就会将自己的ip地址和端口信息记录到该节点。
+      broker创建的节点类型是临时节点，一旦broker宕机，则对应的临时节点也会被自动删除。
+    *2 topic 注册
+      同一个topic的消息会被分成多个分区并将其分布在多个broker上，这些分区信息及与broker的对应关系也都是由Zookeeper在维护，由于专门的节点来记录："/brokers/topic"
+      每个topic都会以"/brokers/topic/[topic]"的形式被记录，如：/brokers/topic/login 、 /broker/topic/search等。
+      https://www.jianshu.com/p/a036405f989c
+      
