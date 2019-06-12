@@ -1,0 +1,79 @@
+工厂方法模式
+能解决简单工厂模式的缺点。
+工厂方法模式把具体产品的创建推迟到了工厂类的子类（具体工厂）中，此时工厂类不再负责所有产品的创建，
+而只是给出具体工厂必须实现的接口，这样工厂方法模式在添加新产品的时候就不修改工厂类逻辑而是添加新的工厂子类。
+符合开放-封闭原则，克服了简单工厂模式中的缺点。
+
+具体实现：
+
+抽象工厂类：
+abstract class Factory{
+    public abstract Product Manufacture();
+}
+
+抽象产品类：
+abstract class Product{
+    public abstract void Show();
+}
+
+具体产品类：
+//具体产品A类
+class  ProductA extends  Product{
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品A");
+    }
+}
+ 
+//具体产品B类
+class  ProductB extends  Product{
+ 
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品B");
+    }
+}
+
+具体工厂类：
+//工厂A类 - 生产A类产品
+class  FactoryA extends Factory{
+    @Override
+    public Product Manufacture() {
+        return new ProductA();
+    }
+}
+ 
+//工厂B类 - 生产B类产品
+class  FactoryB extends Factory{
+    @Override
+    public Product Manufacture() {
+        return new ProductB();
+    }
+}
+
+外界通过调用具体工厂类的方法，从而创建不同具体产品类的实例：
+//生产工作流程
+public class FactoryPattern {
+    public static void main(String[] args){
+        //客户要产品A
+        FactoryA mFactoryA = new FactoryA();
+        mFactoryA.Manufacture().Show();
+ 
+        //客户要产品B
+        FactoryB mFactoryB = new FactoryB();
+        mFactoryB.Manufacture().Show();
+    }
+}
+
+优点：
+    1、符合开闭原则
+        新增一种产品时，只需要增加相应的具体产品类和相应的工厂子类
+        “简单工厂模式需要修改工厂类的判断逻辑”
+    2、符合单一职责原则
+        每个具体工厂类至负责创建对应的产品。
+        “简单工厂中的工厂类存在复杂的switch逻辑判断”
+    3、不使用静态工厂方法，可以形成基于继承的等级结构
+        “简单工厂模式的工厂类使用静态工厂方法”
+缺点：
+    1、添加新产品时，除了增加新产品类外，还要提供与之对应的具体工厂类。
+    2、一个具体工厂只能创建一种具体产品。
