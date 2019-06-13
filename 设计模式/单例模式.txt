@@ -1,0 +1,92 @@
+单例模式
+特点：
+    1、单例类只能有一个实例。
+    2、单例类必须自己创建自己的唯一实例。
+    3、单例类必须给所有其他对象提供这一实例。
+
+使用场景：
+    1、要求生产唯一序列号。
+    2、web中的计数器，不用每次刷新都在数据库里加一次，用单例先缓存起来。
+    3、创建的一个对象需要消耗的资源过多，比如I/O与数据库的连接等。
+
+实现：
+    public class SingleObject(){
+        // 创建 SingleObject的一个对象
+        private static SingleObject instance = new SingleObject();
+        // 让构造函数为private，这样该类就不会被实例化
+        private SingleObject(){}
+        // 获取唯一的可用的对象
+        public static SingleObject getInstance(){
+            return instance;
+        }
+    }
+======================================================================
+懒汉式，线程不安全
+懒加载。
+public class Singleton {  
+    private static Singleton instance;  
+    private Singleton (){}  
+  
+    public static Singleton getInstance() {  
+        if (instance == null) {  
+            instance = new Singleton();  
+        }  
+        return instance;  
+    }  
+}
+
+懒汉式，线程安全
+懒加载
+public class Singleton {  
+    private static Singleton instance;  
+    private Singleton (){}  
+    public static synchronized Singleton getInstance() {  
+        if (instance == null) {  
+            instance = new Singleton();  
+        }  
+        return instance;  
+    }  
+}
+
+饿汉式，线程安全
+非懒加载
+基于classloader机制避免了多线程的同步问题。
+并不是一定在调用getInstance方法时，才会加载类。
+public class Singleton {  
+    private static Singleton instance = new Singleton();  
+    private Singleton (){}  
+    public static Singleton getInstance() {  
+        return instance;  
+    }  
+}
+
+双检锁/双重校验锁
+懒加载、线程安全
+public class Singleton {  
+    private volatile static Singleton singleton;  
+    private Singleton (){}  
+    public static Singleton getSingleton() {  
+        if (singleton == null) {  
+            synchronized (Singleton.class) {  
+            if (singleton == null) {  
+                singleton = new Singleton();  
+            }  
+            }  
+        }  
+        return singleton;  
+    }  
+}
+
+登记式/静态内部类
+懒加载、线程安全
+利用了lassloader机制来保证初始化instance时只有一个线程，只有调用getInstance方法时，才会显式装载SingletonHodler类，从而实例化instance.
+public class Singleton {  
+    private static class SingletonHolder {  
+        private static final Singleton INSTANCE = new Singleton();  
+    }  
+    private Singleton (){}  
+    public static final Singleton getInstance() {  
+        return SingletonHolder.INSTANCE;  
+    }  
+}
+https://www.jianshu.com/p/c836a7576118
