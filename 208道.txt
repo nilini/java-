@@ -1010,7 +1010,7 @@ https://www.cnblogs.com/hackyo/p/6646051.html
 188.redis 持久化有几种方式？
 
 189.redis 怎么实现分布式锁？
-
+    基于数据库、基于缓存（redis等）、基于Zookeeper三种方案。
 190.redis 分布式锁有什么缺陷？
 
 191.redis 如何做内存优化？
