@@ -1,0 +1,27 @@
+mysql表级锁
+1、两种锁：
+    1）表锁
+    2）元数据锁（meta data lock, MDL）
+2、语法：lock tables ... read/write
+        可以用unlock tables主动释放锁，也可以在客户端断开的时候自动释放。
+3、另一类表锁的锁是MDL：MDL不需要显式使用，在访问一个表的时候自动加上。读读不互斥，读写、写写互斥。
+    场景：session A ---> begin; select * from t limit 1;
+          session B ---> select * from t limit 1;
+          session C ---> alter table t add f int; （阻塞）
+          session D ---> select * from t limit 1; （阻塞）
+          事务中的MDL锁，在语句执行开始时申请，但是在语句结束后并不会马上释放，而会等到真个事务提交后再释放。
+          如果某个表上的查询语句频繁，而且客户端有重试机制，也就是说超时后会再起一个新session再请求的话，这个库
+          的线程很快就会爆满。
+4、如何安全地给小表加字段：
+    1）首先解决长事务，事务不提交，就会一直站着MDL锁，在MYSQL的information_schema库的innodb_trx表中，可以查到
+      当前执行中的事务，如果要锁DDL表变更的表刚好有长事务在执行，要考虑先暂停DDL，或者kill掉这个长事务。
+    2）如果是热点表，kill掉事务后，有会有新的请求过来。这时只能在alter table语句里设定等待时间。
+
+    MariaDB 已经合并了 AliSQL 的这个功能，所以这两个开源分支目前都支持 DDL NOWAIT/WAIT n 这个语法。
+    ALTER TABLE tbl_name NOWAIT add column ...
+    ALTER TABLE tbl_name WAIT N add column ... 
+
+
+
+
+
