@@ -1,0 +1,12 @@
+mysql全局锁
+1、加全局锁的方法：flush tables with read lock （FTWRL）
+3、让整个库处于只读状态，其他线程的更新语句都会阻塞。
+4、场景：全库逻辑备份。
+5、如果不加锁，备份系统备份得到的库不是一个逻辑时间点。
+6、官方自带的逻辑备份工具：mysqldump。当mysqldump使用参数-single-transaction的时候，导数据之前就会启动一个事务，
+    来确保拿到一致性视图。而由于MVCC的支持，这个过程中数据是可以正常更新的。
+7、mysqldump的single-transaction方法只适用于所有的表使用事务引擎的库，myisam不支持，所以FTWRL依然有存在价值。
+8、set global readonly = true 也会让整个库处于只读状态，但是：
+    1）在有些系统中，readonly的值会被用来做其他逻辑，比如判断一个库是主库还是备库。
+    2）FTWRL命令给之后如果客户端异常断开，mysql会自动释放这个全局锁，设置readonly则一直保持不可写状态。
+    
