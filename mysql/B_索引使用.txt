@@ -7,4 +7,19 @@
 2、更新过程
       1）当需要更新一个数据页时，如果数据页在内存中就直接更新，而如果这个数据页还没有在内存中的话，InnoDB会将这些更新操作缓存在change buffer中。
 
-二、
+二、字符串字段加索引
+      两种方式：
+        1）整个字符串：alter table user add index index1(email);
+        2）部分字符串：alter table user add index index2(email(6));
+      字符串索引长度选择：
+        select 
+            count(distinct left(email, 4)) as L4,
+            count(distinct left(email, 5)) as L5,
+            count(distinct left(email, 6)) as L6,
+            count(distinct left(email, 7)) as L7,
+       from user;
+       缺点：使用了前缀索引就用不上了覆盖索引对查询性能的优化了。
+       注意点：
+            1）如果正序区分度不高，则可以使用倒序存储。
+            2）再加一个hash字段，用来保存hash值。
+            以上两个都不支持范围查询。
