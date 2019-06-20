@@ -4,13 +4,14 @@ mysql幻读
     产生幻读的原因是，行锁只能锁住行，但是新插入记录这个动作，要更新的是记录之间的“间隙”，引入间隙锁解决幻读。
 3、数据行能加锁，数据行的间隙也能加锁。
 4、两种锁
-    select ... lock in share mode 只锁覆盖索引。
-    select ... for update 会加上间隙锁，会给主键索引上满足条件的行加上行锁。
+    select ... lock in share mode 读锁
+    select ... for update 写锁
     锁是加在索引上的，如果要用lock in share mode来给行加锁避免数据被更新的话，就必须得绕过覆盖索引的优化，在查询字段中加入索引中不存在的字段。
 5、间隙锁:
     1）在可重读读隔离级别下才会生效的。
     2）间隙锁不会冲突。
 6、三种锁算法：
+
     1）Record Lock：单个行记录上的锁。
     2）Gap Lock：间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。
     2）Next-Key Lock：间隙锁和行锁合称为next-key lock, 每个next-key lock是前开后闭区间。
@@ -29,11 +30,12 @@ mysql幻读
     3）索引上的等值查询，给唯一索引加锁的时候，next-key lock退化为行锁。
     4）索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，nexy-key lock退化为间隙锁。
     5）bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
-    例子：
-    1）sql：begin; update t set d=d+1 where id=7;
-       锁范围：(5, 10)
-    2）sql：begin; select id from t where c=5 lock in share mode;
-       锁范围：(5, 10)
-    3）sql：begin; select * from t where id>=10 and id<10 for update;
-       锁范围：
+    next-key lock = 先加间隙锁 + 后加行锁。行锁可能阻塞，间隙锁不会阻塞。
     https://time.geekbang.org/column/article/75659
+8、
+    update 
+    delete
+    select ... for update
+    select ... lock in share mode
+    lock in share mode: 如果查询使用到了覆盖索引，并不需要访问主键索引，则只会在覆盖索引上加锁，并不会在主键索引上加锁。
+    for update 定会在主键索引上加锁。
