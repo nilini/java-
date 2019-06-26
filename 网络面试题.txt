@@ -1,0 +1,24 @@
+
+ 答案参考：</span><a href="http://www.k6k4.com/simple_question/qlist/13/2">网络常见面试题</span>
+
+</a><a href="http://www.k6k4.com/simple_question/qshow/aaqwruomr1539647954268">1、简单介绍一下HTTP的长连接和短连接?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqtjgilg1539647669267">2、简述计算机网络中的七层模型?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqsziklk1539302804706">3、常见的HTTP状态码有哪些?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqhkiayk1539648637947">4、TCP的三次握手过程?为什么会采用三次握手，若采用二次握手可以吗?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqclfglr1539646846219">5、请简述一下TCP的三次握手和四次挥手协议?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqgzcxca1539648522535">6、TCP和UDP相关的协议分别有哪些?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqtpayvx1539647266817">7、TCP和UDP有什么区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqkvmiqe1539302563999">8、Post和Get有什么区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqixvgio1539648450543">9、在浏览器中输入www.baidu.com后执行的全部过程?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqriehpz1539648207254">10、列举几种常见的协议，并简述他们的作用?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqaxnvgz1539302327127">11、cookie 和session 有什么区别?</span></a>

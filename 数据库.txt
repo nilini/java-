@@ -1,0 +1,40 @@
+ 来源：</span><a href="http://www.k6k4.com/circle/show/aakpfevdo1540252263264">k6k4</span></a>
+ 答案参考：</span><a href="http://www.k6k4.com/simple_question/qlist/6/7">数据库常见面试题</span>
+
+</a><a href="http://www.k6k4.com/simple_question/qshow/aaqahgqxq1534169634563">1、数据库有哪几种范式?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqpqyppw1532840258250">2、Mysql提供了哪几种事务隔离级别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqrpgzmu1539182703493">3、MySQL中varchar与char的区别以及varchar(50)中的50代表的涵义?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqtrvqwz1537945220645">4、date,datetime和timestamp数据类型有什么区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqvwqzpz1534170042122">5、union 与union all的区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqqllmcw1534169957624">6、简述Mysql几种Join的区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqacytin1534169505743">7、drop,delete与truncate的区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqgsagdh1539184953117">8、mysql有哪几种索引?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqrgxpfc1539182856183">9、innodb的事务与日志的实现方式?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqmmqvrh1532840611853">10、简述Mysql Innodb引擎和MyIASM引擎的区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqcnvxja1539183710214">11、innodb的读写参数优化?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqjxefaj1539183440106">12、备份计划，mysqldump以及xtranbackup的实现原理?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqajshgb1539183168702">13、MySQL binlog的几种日志录入格式以及区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqtnskxe1539182163973">14、MySQL的复制原理以及流程?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqzfbznr1539183347197">15、sql执行慢的原因有哪些，如何进行sql优化?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqzqvidm1534169698708">16、数据库优化的思路?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqvtkqcr1534169440295">17、视图的作用，视图可以更改么?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqcbjwse1539183965066">18、存储过程与触发器的区别?</span></a>
+
+<a href="http://www.k6k4.com/simple_question/qshow/aaqsopjlj1539183618921">19、如何在最快时间之内重启500台db?</span></a>
