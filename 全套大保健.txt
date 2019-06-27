@@ -1,0 +1,974 @@
+< 一 基础 >
+-- Java语言基础部分
+JDK 和 JRE 有什么区别？
+
+说说环境变量JAVA_HOME的作用？
+
+String、StringBuffer、StringBuilder的区别？
+
+如何将字符串反转？
+
+==和equals的区别？
+
+equals 方法、hashCode方法， 什么时候需要重写？
+
+Overload和Override的区别。Overload的方法是否可以改变返回值的类型？
+
+什么时候使用Object类中的clone()方法，clone() 和new 有什么区别。
+
+如何将Java 对象序列化？
+
+什么是transient ，如何使用？
+
+Java IO 主要的接口、实现？
+
+什么是ByteArrayInputStream、ByteArrayOutputStream，如何使用？
+
+什么是DataInputStream、、DataOutputStream，如何使用？
+
+什么是ObjectInputStream、、ObjectOutputStream，如何使用？
+
+什么是标准输入、输出流， 缓冲流？如何重定向标准输入流？
+
+什么是Console？
+
+什么是Serializable、Externalizable，如何使用？
+
+字节流和字符流有什么区别，如何使用？
+
+flush()方法的作用？什么时候需要执行flush？
+
+如何随机访问一个文件？
+
+什么是定时任务，如何使用TimerTask ？
+
+深拷贝、浅拷贝的区别？如何使用？
+
+受检异常、非受检异常的区别，如何使用？
+
+常见的受检异常、非受检异常有哪些？ 代码中异常如何处理？
+
+try catch finally块中，catch、finally是否可以做函数返回？
+
+如何写一个自定义的注解？注解的使用范围有哪些？
+
+Java中的注解是如何工作的？
+
+什么是枚举，是否可以继承？如何获取一个枚举类型里面的所有值？Java中的枚举是如何工作的？
+
+Java 文件等资源，打开了不关闭，会出现什么后果？
+
+什么时候用assert？
+
+int和Integer有什么别？
+
+什么是Thread join、yeild？ 区别？
+
+栈、队列的区别？双向队列？
+
+如何捕获正则表达式中的分组？
+
+Files的常用方法都有哪些？
+
+在 Queue 中 poll()和 remove()有什么区别？
+
+throw 和 throws 的区别？
+
+try-catch-finally 中哪个部分可以省略？
+
+-- 集合部分
+List有哪些实现，如何实现的，如何使用它们？
+
+Map有哪些实现， 如何实现的？说说HashMap底层数据结构
+
+HashSet是如何实现的？HashMap,HashSet的区别？
+
+HashMap是如何get、put、扩容的？key重复了怎么办? 是如何解决的?
+
+如何Java的两个集合的交集、并集？
+
+如何保证List、Set或者Map中元素的有序性？
+
+List里的元素能不能重复？Set呢？List、Set中如果两次存放相同的对象或相同的key，会返回什么？是否发生异常？
+
+-- 多线程部分
+什么是线程安全问题？什么情况下需要考虑其线程安全问题？
+
+Java线程的状态有哪些，它们是何时、如何（通过什么方法）进行转换的
+
+什么是Vector、HashTable？
+
+什么是CopyOnWriteArrayList，如何使用它？
+
+如何创建或保证一个Map、List的线程安全？
+
+Java 锁中，synchronized RentrantLock 分别在什么场景下使用，如何使用？
+
+RentrantLock 提供主要哪些方法？
+
+如何唤醒一个阻塞的线程？
+
+什么是lamda表达式、函数式编程？Java.util.function包里面的 Supplier/Consumer/Predicate/BiFunction 分别是什么含义？
+
+什么是线程组？
+
+说说sleep、wait 的区别
+
+Thread的 notify()给notifyAll()的区别?
+
+什么是Callable，Future及它们的用法
+
+什么是死锁、活锁，无锁？
+
+什么是volatile ，如何使用？
+
+什么是daemon线程？
+
+多线程锁的升级原理是什么？
+
+-- 框架部分
+什么是J2EE？
+
+什么是容器？
+
+什么是Session、Cookie？如何使用？
+
+什么是Servlet，说说它的生命周期
+
+Spring中bean的生命周期
+
+Spring的启动、加载过程？
+
+Spring中什么是Lazy-Load？
+
+Spring中Bean有哪些Scope？
+
+Spring如何解决循环依赖？
+
+Spring中常用注解？
+
+Spring中如果一个注入一个对象，但是这个对象有多个实例，怎么处理？
+
+SpringMVC常用的注解，RequestBody，ResponseBody ，RequestParam，PathVariables，RestController，ControllerAdvice， WebInitParam，InitBinder
+
+SpringMVC如何做类型转换？
+
+SpringMVC如何做参数校验？
+
+Spring Boot常用的注解
+
+说说Tomcat的各种配置，如何配置docBase
+
+Tomcat中，什么是Host、Engine、Server、Service、Realm、Connector、Context、Wrapper、Valve？
+
+Tomcat中，context.xml什么作用？如何配置？
+
+Tomcat中，jsp是如何热加载的？类是否可以热加载？
+
+Tomcat中，什么是Catalina_BASE？如何设置？
+
+servlet的forward、redirect 有什么区别？
+
+Web容器中过滤器、拦截器、监听器什么区别？
+
+Get、Post请求什么区别？
+
+什么是ajax？如何实现？
+
+什么是JSP，如何工作的？
+
+如何配置数据库连接池？
+
+什么是Locale、ResourceBoundle
+
+-- 设计部分
+说说设计模式六大原则
+
+单例模式的有哪些写法？
+
+描述一下 装饰器模式 、观察者模式、 责任链、门面模式、 策略模式、 代理模式 、桥接模式 、适配器模式、 备忘录模式、 或其他设计模式， 使用文字或者UML
+
+公司项目中是如何使用设计模式的？
+
+开源项目中是如何使用设计模式的？
+
+什么是实体关系图？如何设计数据库表？
+
+什么是用例图、时序图、活动图、类图、对象图、构件图、协作图、状态图？如何画？
+
+-- 其他
+什么是发布-订阅消息模式？
+
+MQ的有什么作用
+
+说说下面Cron表达式的其中3个的含义：
+0 0 10,14,16 * * ? 
+0 0/30 9-17 * * ? 
+0 0 12 ? * WED 
+0 15 10 ? * *
+0 15 10 * * ?
+0 15 10 * * ? *
+0 15 10 * * ? 2005
+
+写一个匹配ip地址或 新浪邮箱地址的正则表达式
+
+Junit用法，before,beforeClass,after, afterClass的执行顺序
+
+说说Xml、json的优缺点，分别有哪些现有的开源框架?
+
+如何做登录认证？什么是RBAC，使用过哪些框架？
+
+如何做数据权限控制？
+
+如何保护网站防止被攻击？
+
+什么是乱码问题，如何解决？
+
+什么是字符集？有哪些？哪些是支持中文的？
+
+什么是Joda Time？ Java8中是如何处理日期、时间的？
+
+如何格式化日期？ 数字？ 字符串？
+
+Linux中如何配置网络？网络模式有哪些？
+
+< 二 高级 >
+-- JVM 部分
+-Xms，-Xmx，-Xmn -XX:NewSize，-XX:MaxNewSize，-XX:PermSize,-XX:MaxPermSize	-XX:NewRatio，-XX:+UseConcMarkSweepGC，-XX:+PrintGC是什么含义？
+
+如何捕捉OOM？
+
+如何打印GC 日志，如何分析？
+
+一般如何设置Java堆、线程的栈的大小？
+
+Java 类是如何加载到JVM中来的，如何初始化？
+
+Class.forName()的作用是？
+
+JVM内存区域划分？JDK 7 或JDK 8
+
+Java中什么是堆、什么是栈，他们用来存储什么数据？
+
+如何导出Java程序的堆栈？
+
+堆的分代有哪些？为什么要分代？
+
+JDK 7 以前是如何进行GC的、JVM 中的YGC和FGC发生的具体场景？
+
+Java有哪些GC的算法，有哪些GC回收器？
+
+哪里、什么时候，堆或栈 会发生溢出？说说 内存溢出可能原因和解决方案。
+
+什么是GC Roots,safepoint，saferegion？
+
+什么是Threadlocal？ 如何使用？
+
+什么是泛型， 如何使用（使用在哪些地方）？Java中的泛型是如何工作的？
+
+什么是泛型通配符？ 在什么情况下使用？
+
+如何获取泛型对应的实际类型？
+
+什么是反射，如何使用、什么场景下使用？ 如何访问一个对象的private字段？
+
+什么是类加载器？ 说说类加载器的双亲委派加载机制
+
+什么是运行时常量池？
+
+泛型是如何实现的？ List<T>、List<?>、List<Object> 的区别？
+
+什么是WeakReference、SoftReference、PhantomReference？
+
+什么是Unsafe，如何使用？
+
+如何做堆栈内存分析？
+
+什么是内存泄漏，如何避免？
+
+JVM优化cpu高的时候如果分析和监控
+
+Java 虚拟机有什么优化技巧？
+
+Java的运行模式？
+
+什么是热编译？
+
+-- 多线程部分
+说说synchronized 实现原理。synchronized 是否可以重入？
+
+什么是偏向锁、自旋锁？
+
+如何创建一个Java 线程池？ 如何创建一个线程数固定大小的线程池？
+
+ThreadPoolExecutor构造函数的各个参数的含义？
+
+ScheduledExecutorService 是如何实现的？
+
+什么是CachedThreadPool？
+
+Java 线程池submit、execute方法的区别？
+
+什么是线程调度算法，有哪些？
+
+什么是可重入锁？
+
+什么是CAS？
+
+如何使用LockSupport、AQS，CAS, Atomic包
+
+ReadWriteLock 、 CountDownLantch 是如何使用的？
+
+Java 锁中的Confition 如何创建、使用，它有哪些方法？
+
+ConcurrentHashMap是如何实现线程安全的？
+
+什么是CyCliBarrier、Semaphore，说说其的用法、原理？
+
+说说J.U.C中的Phaser
+
+什么是重排序，内存屏障，为什么需要它们，什么时候使用？
+
+什么是happens-before原则？
+
+什么是False Sharing，Cache Line？
+
+什么是FutureTask？
+
+说说CompletableFuture
+
+什么是优先队列？
+
+说说ForkJoin框架
+
+什么是阻塞队列？有哪些实现？ 什么区别？
+
+什么是伪随机数？如何生成线程安全的随机数？Random、SimpleDateFormat 如何使用？是否有线程安全问题？什么时候有？
+
+Struts1是不是线程安全的？Struts2呢？Hibernate、Mybatis、SpringMVC呢？
+
+Disruptor 为什么性能好？
+
+-- 网络、NIO部分
+说说TCP/IP三次握手、四次挥手
+
+HTTP的工作机制？HTTP的请求格式，响应格式是怎么样的？
+
+什么是短连接、长连接、持久连接？
+
+什么是心跳？什么时候需要它？
+
+什么是HTTP连接池？
+
+HTTP如何做静态资源缓存控制？
+
+HTTP常见响应码的含义，1xx，2xx，3xx，4xx，5xx？
+
+HTTP响应码 301 和 302 代表的是什么？有什么区别？
+
+说一下 tcp 粘包是怎么产生的？
+
+什么是tcp滑动窗口
+
+如何实现跨域？
+
+说说HTTP/2 ？
+
+说说HTTPS完整交互过程、握手后工作流程，连接断开流程
+
+如何启用HTTPS ，需要哪些配置？
+
+什么是对称加密和非对称加密？分别有哪些算法？
+
+什么是消息摘要算法？什么是MD4、MD5？
+
+如何将服务端消息推送到浏览器端？
+
+IO、NIO、BIO、AIO的联系和区别
+
+什么是非阻塞IO？
+
+什么是异步IO？
+
+什么是NIO的Buffer？如何创建一个ByteBuffer？
+
+如何创建一个Channel？
+
+说说Buffer的capacity,position和limit
+
+NIO是如何工作的，关键的组件有哪些？
+
+什么是Reactor模型？
+
+什么是多路复用？
+
+说说DDos攻击、XSS攻击、CSRF攻击
+
+Netty 为什么性能好？ 它是如何处理各种事件的？
+
+什么是C10K问题
+
+-- 框架部分
+对Spring的理解，项目中都用什么？怎么用的？说说对IOC、和AOP的理解及实现原理
+
+什么是ORM？如何写一个orm框架
+
+Mybatis的工作机制
+
+Mybatis中 #{}和 ${}的区别是什么？
+
+Mybatis中如何做分页？
+
+Mybatis中是否支持延迟加载？
+
+Mybatis中有哪些执行器？
+
+Mybatis中如何自定义插件？
+
+说说Spring AOP， 什么是切面、切点、连接切点、通知方法？
+
+什么是Spring声明式事务，如何配置？
+
+@Transactional注解一般写在什么位置?如何控制其回滚?
+
+SpringBoot的优缺点？为什么使用它？工作原理？
+
+SpringBoot中什么是profile？如何启用不同的profile？如何定义多套不同环境配置？
+
+SpringBoot中EnableXxx注解是如何工作的
+
+如何理解 Spring Boot 中的 Starters？
+
+SpringBoot 实现热部署有哪几种方式？
+
+如何理解 Spring Boot 配置加载顺序？
+
+Dubbo 的优缺点？工作原理？
+
+什么是Spring Cloud？SpringCloud 的优缺点？
+
+什么是Hystrix
+
+说说的Tomcat、Jetty、Apache、JBoss、Spring、SpringMVC、Mybatis、SpringBoot、SpringCloud、Dubbo 或者你看过的任何 源码，主要模块， 如何工作的？
+
+什么是token， 如何使用、什么场景下使用？
+
+log4j、log4j2、slf4j、 logback、 commons-logging 是如何配置、使用的？
+
+比较下Log4j2，LogBack等日志框架，如何选择日志框架？
+
+Quartz实现原理?
+
+用过哪些Java 测试框架？
+
+Spring、Springboot中如何做单元测试？
+
+一级和二级缓存的作用，hibernate或mybatis 中如何使用缓存？
+
+什么是Webservice？
+
+什么是Restful？
+
+什么是Websocket？
+
+Spring+MyBatis实现读写分离简述？
+
+如何启动停止Nginx ？
+
+Nginx 中的Woker线程是什么意思？
+
+Nginx 的工作模式是？epoll
+
+Nginx 有哪些主要配置？说说up_stream、server
+
+Nginx、Dubbo或Spring Cloud中有哪些负载均衡算法？
+
+如何使用nginx 做动静分离？
+
+-- 微服务部分
+什么是微服务？什么是SOA?
+
+你所知道的微服务技术栈有哪些？请举例一二？
+
+服务限流的方式？
+
+如何做拥塞控制？
+
+如何跟踪 分布式服务之间的调用 ?
+
+何时、如何做失败重试?
+
+什么是无服务网关？
+
+如何做服务监控？
+
+如何做服务治理？
+
+说说Feign、Ribbon
+
+什么是幂等，如何实现服务接口的幂等？
+
+高并发量大的话怎么处理热点?
+
+服务雪崩、隔离、熔断、降级？升级、自动扩容？
+
+如何做接口加密？
+
+微服务之间如何做认证、授权？
+
+缓存的类型？算法？ LRU？
+
+如何做分布式缓存？
+
+如何防止缓存击透、雪崩？
+
+如何防止热点缓存失效？
+
+微服务之间是如何独立通讯的？
+
+微服务如何拆分？
+
+什么是Docker？ 有哪些命令？
+
+如何创建一个Docker镜像、容器？
+
+什么是容器编排？如何操作？
+
+-- Dubbo
+
+dubbo都支持什么协议，推荐用哪种？
+
+Dubbo内置了哪几种服务容器？
+
+Dubbo里面有哪几种节点角色？
+
+画一画服务注册与发现的流程图
+
+Dubbo默认使用什么注册中心，还有别的选择吗？
+
+Dubbo 核心的配置有哪些？
+
+Dubbo启动时如果依赖的服务不可用会怎样？
+
+Dubbo有哪些序列化框架，推荐使用什么？
+
+Dubbo有哪些通信框架，默认是什么？
+
+Dubbo有哪几种集群容错方案，默认是哪种？
+
+Dubbo有哪几种负载均衡策略，默认是哪种？
+
+注册了多个同一样的服务，如果测试指定的某一个服务呢？
+
+当一个服务接口有多种实现时怎么做？
+
+服务上线怎么兼容旧版本？
+
+Dubbo支持服务多协议吗？
+
+Dubbo可以对结果进行缓存吗？
+
+Dubbo服务之间的调用是阻塞的吗？
+
+Dubbo支持分布式事务吗？
+
+说说 Dubbo 服务暴露的过程。
+
+Dubbo支持服务降级吗？
+
+Dubbo的管理控制台能做什么？
+
+说说Dubbo的SPI机制
+
+如何解决服务调用链过长的问题？
+
+集群容错怎么做？
+
+-- 算法部分
+说说常见的搜索算法、排序算法，及其时间复杂度
+
+说说 二分查找算法
+
+说说DFS、BFS算法
+
+说说动态规划算法、分治算法、递归、贪心、暴力算法
+
+什么是二叉树，如何遍历二叉树？
+
+什么是跳表、B树？AVL树、
+
+什么是红黑树，有哪些特点？
+
+什么是图的最短路径问题，有哪些算法？
+
+10G的整数中，取出最大的一个（不光是使用高效的排序算法，还需要考虑内存大小）
+BGP，BGP(边界网关协议)
+
+-- 团队合作部分
+Svn的工作机制？
+
+Svn中冲突或tree conflict，如何解决？
+
+Git的工作机制，它是如何分支管理的？
+
+什么是Git的工作区？
+
+说说Git的常用命令
+
+Git中如果将修改提交到远程仓库？
+
+Git中如何处理冲突？
+
+Svn、Git的异同？
+
+Git中fork、 branch、clone 之间的区别？
+
+Git中pull 和fetch有什么区别？
+
+Git中merge和 rebase的重要区别
+
+Git库所在的文件夹中的文件哪种状态
+
+Ant或Maven 是如何工作的？他们有什么优缺点？
+
+Maven项目的目录结构是怎么样的？分别是什么作用？
+
+Maven 项目的生命周期？
+
+Maven 插件的生命周期？
+
+Maven中依赖出现了冲突，如何处理？
+
+Maven中的依赖无法下载、中央仓库也没有，如何处理？
+
+mvn clean package命令进行项目打包，请问该命令执行了哪些动作来完成该任务？
+
+Maven多模块如何聚合？
+
+Maven如何启用不同的profile？
+
+如何通过Maven把war直接部署到远程Tomcat？
+
+Maven中如何设置编码格式？JDK版本？
+
+说说常见的Maven私服的仓库类型
+
+Snapshot，release版本的区别？
+
+什么是Sonar、Jenkins？
+
+-- 前端
+什么是盒子模型？
+
+说说浏览器内置有哪些对象？
+
+说说DOM树，如何操作它？
+
+阐述清楚浮动的几种方式
+
+什么是JS闭包
+
+什么是原型链
+
+Jquery有哪些选择器，如何实现的, 源码
+
+什么是Freemark， 如何配置，使用？
+
+CMD、amd规范
+
+Nodejs、 Vue、React、augularJS
+
+说说前后端优化的基本常识
+
+说说浏览器中输入url，按下回车键，到页面响应完成的整个过程
+
+说一下 JSONP 实现原理
+
+怎么做前后端分离？
+
+-- 运维&其他
+什么是动态代理？有哪些实现？ CGlib的原理？
+
+如何防止页面重复提交?
+
+如何查看网络进程？如何查看端口是否被占用？
+
+用awk统计一个ip文件中top10
+
+用netstat查看
+
+什么是lucence倒排索引？如何实现的？
+
+如何查看、分析 字节码？说说字节码指令
+
+说说Aspectj、ASM框架
+
+什么是尾递归？
+
+什么是Java代码坏味道，如何处理它？
+
+Java8、9 或 10 分别都有什么新特性？
+
+说说Oauth或Jwt
+
+说说JMS、JPA、JTA、JMX、RMI、RPC
+
+Redis内存清理策略是怎么样的？
+
+Redis如何清除过期数据？
+
+说说计算机网络OSI7层模型（TCP4层）每层的协议
+
+什么是Linux的内存页、SWAP？
+
+说说Linux的各个顶级目录的含义
+
+Linux下如何查看CPU负载和IO端口的使用情况
+
+Windows、Linux中如何抓包分析？
+
+什么是MVC？
+
+服务如何分层？为什么要分三层？
+
+什么是CDN？
+
+什么是语法糖？
+
+什么是生产者-消费者模式？有哪些实现？
+
+什么是LVS？
+
+什么是Haproxy、KeepAlived？两者什么区别？
+
+< 三 数据库 >
+什么是SQL，有哪些类型？
+
+Distinct(1), Distinct(*), Distinct(column) 的区别
+
+char 和 varchar 的区别是什么？
+
+什么是子查询、嵌套查询？
+
+MySQL的什么是内连接、左连接、右连接、笛卡尔积？有什么区别？
+
+union和union all有什么不同?
+
+drop、truncate与 delete区别
+
+如何分析SQL，如何查找慢查询？
+
+如何查看SQL的explain plan
+
+主键和外键的区别？
+
+什么是索引 、范围索引？
+
+索引类型有哪些？如何创建？
+
+主键和索引的区别？
+
+如何使用索引？
+
+什么情况不能使用索引？
+
+NULL是什么意思?
+
+简单描述tablespace / segment / extent / block之间的关系
+
+数据库日志的作用是什么？有哪些？
+
+说说MySQL的binlog
+
+MySQL是如何实现事务的？
+
+Statement与PreparedStatement的区别
+
+什么是SQL注入，如何防止SQL注入？
+
+如何做批量数据操作？
+
+什么是存储过程？视图？游标？
+
+什么是事务的ACID？
+
+说说数据库的范式
+
+大表如何做分页？
+
+说说MyISAM InnoDB 的异同？
+
+说说DB的特性和隔离级别
+
+如何实现数据库读写分离？ 如何 做集群？
+
+数据库的锁有哪些分类，如何使用？
+
+什么情况出现死锁？如何处理？
+
+MySQL数据库锁表怎么解决？
+
+什么是聚集索引、非聚集索引，它们的区别，如何使用？
+
+什么是数据库的悲观锁、乐观锁，它们的区别？
+
+MySQL的行级锁加在哪个位置？
+
+一条SQL查询语句是如何执行的？
+
+NoSQL为啥比SQL快？
+
+对比一下Redis、Mongodb
+
+商品相关模块系统怎么设计数据模型？
+
+动态表单设计？
+
+自定义表格的实现？
+
+< 四 分布式 >
+什么是单点故障？如何处理？
+
+在一个大系统中存在哪些单点失效的问题
+
+可靠性和可用性如何理解？
+
+什么是CAP、BASE？
+
+什么是一致性Hash？
+
+分布式环境中，如何保证session高可用、性能、一致性？
+
+什么是分布式唯一ID，如何实现？
+
+什么是分布式锁，如何实现一个分布式锁？
+
+什么是分布式事务、如何实现？
+
+什么是分布式任务？一般是如何实现的？有哪些框架？
+
+什么是Redis？如何实现的？
+
+Redis提供了哪些数据结构？有什么特点？
+
+Redis如何做集群？
+
+说说Redis 同步机制
+
+Sentinel 或 cluster工作原理？
+
+Redis如何原子性的执行多个命令？
+
+Redis有哪些Java客户端？
+
+jedis 和 redisson 有哪些区别？
+
+Redis如何执行一个事务？
+
+什么是ZooKeeper，它是如何分布式高可用的？ 如何选举的？ 有哪些类型节点？
+
+说说2pc协议，3pc协议，tcc
+
+说说ZAB协议，Raft协议，Paxos协议
+
+什么是AMQP、STOMP
+
+说说RabbitMQ 的消息处理机制
+
+RabbitMQ 中的vhost是什么？
+
+什么是延迟队列，什么是死信队列？
+
+RabbitMQ 集群方式？
+
+RabbitMQ消息堆积怎么处理？ RabbitMQ如何保证 消息的生产成功、消费成功？
+
+如何保证RabbitMQ的消息只被消费一次，如何处理消息丢失或重复？
+
+Kafka高性能的原因？ kafka 是如何做集群的？
+
+Kafka消息会不会丢失？
+
+Kafka的leader副本选举？
+
+Kafka消息的检索？
+
+Lucene 如何做全文检索？
+
+ElasticSearch如何解决深度分页的问题？
+
+Elasticsearch如何分片？
+
+Elasticsearch集群后如何路由?
+
+Elasticsearch如何优化?
+
+什么是分布式文件系统？说说FastDFS
+
+Hadoop、HDFS、Hbase 的基本工作原理
+
+什么是MapReduce？
+
+什么是流式计算？
+
+< 五 实践题 >
+1.编写一个方法去掉数组里面 重复的内容 var arr=[1,2,3,4,5,1,2,3]
+
+2.SQL题
+student(sno,sname,sage,ssex)学生表
+course(cno,cname,tno) 课程表
+sc(sno,cno,score) 成绩表
+teacher(tno,tname) 教师表
+
+A: 查询课程1的成绩比课程2的成绩高的所有学生的学号
+B: 查询平均成绩大于60分的同学的学号和平均成绩
+C: 查询不同老师所教不同课程平均分, 从高到低显示
+
+3.统计100G的ip文件中出现ip次数最多的100个ip
+
+4.广度优先遍历D盘目录下面的所有子目录和文件？
+
+5.用星号(*)打印一个空心菱形，允许一个参数作为菱形高度，如下
+
+
+
+ 
+
+
+6.同时给10万个人发工资，怎么样设计并发方案，能确保在1分钟内全部发完 打个比方会提出类似的场景（信息平台）
+
+A系统给B系统转100块钱，如何实现？
+
+A服务调用B服务多接口，响应时间最短方案；
+
+
+7.多线程下读概率远远大于写概率，如何解决并发问题？
+
+8.写一个插入排序、选择排序、桶排序、归并排序或快速排序算法
+
+9.设计十万并发级别的网站后台，如何计算需要的机器和配置？
+
+< 关于个人成长、职业规划 >
+怎么解决平时技术上遇到的问题
+
+项目中遇到的最大挑战是什么？怎么解决的？
+
+与同事沟通的时候，如果遇到意见不合或发生冲突了如何解决？
+
+如何提升自己的技术？
+
+最有成就感的事情？（工作上）
+
+说说自己性格上的优缺点
+
+自己觉得自己工作上的短板/优点是什么？
+
+最近在看哪些书？
+
+对这个行业的印象？
+
+职业规划是？
+
+平时下班后做什么？周末做什么？
+
+有啥想问我们的？

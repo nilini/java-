@@ -1,0 +1,5 @@
+https://www.cnblogs.com/javafirst0/p/10728852.html
+https://mp.weixin.qq.com/s?__biz=MzU5NTAzNjM0Mw==&mid=2247486185&idx=1&sn=9be5e736b42dbc08c33fb75bcc1c3d6e&chksm=fe795b31c90ed227ffd8a71e5f5e9d1e11be995e85cf17ecd8643f55cb4f759554199ec54d0b&scene=21#wechat_redirect
+https://mp.weixin.qq.com/s?__biz=MzU5NTAzNjM0Mw==&mid=2247486126&idx=1&sn=f31d5b1037ac48a693e734a4d7734e25&chksm=fe795b76c90ed260555956801011da591de5b2f493e8510fa66c8adda45268ae6f327b9efdde&scene=21#wechat_redirect
+RPC是远程调用的简称，广泛应用在大规模分布式应用中。
+RPC框架：RMI（java自带的远程方法调用工具）、Hessian（基于HTTP的远程方法调用）、Dubbo（淘宝开源的基于TCP的RPC框架）
