@@ -113,7 +113,13 @@ https://blog.csdn.net/varyall/article/details/78657726
 17、什么是web缓存？有什么优点？
 
 18、什么是https，说说https的工作原理？
-
+    https://blog.csdn.net/wangtaomtk/article/details/80917081
+    https://blog.csdn.net/woshinannan741/article/details/71550436
+    对称加密：加密解密使用同一套算法，很容易逆向。
+    非对称加密：分为公钥和私钥。公钥是谁都有，用于对信息加密，只有私钥才能解密。
+    通信：
+        A、B各有一套用于加密解密的公钥和私钥。
+        A、B互发公钥，使用公钥加密，使用私钥解密。
 19、什么是http代理服务器，有什么用？
 
 20、什么是虚拟主机及实现原理？
@@ -137,35 +143,56 @@ https://blog.csdn.net/varyall/article/details/78657726
 29、什么是DoS、DDoS、DRDoS攻击？如何防御？
 
 30、描述一下Java异常层次结构。
-
+    Error：错误，是程序无法处理的错误。比如OutOfMemoryError。
+    Exception：异常，是程序本身可以处理的异常。NullPointerException、ArithmeticException、ArrayIndexOutOfBoundException
+    Error和Exception继承Throwable。
 31、什么是检查异常，不受检查异常，运行时异常？并分别举例说明。
-
+    可查异常：编译器会检查它，当程序中出现这类异常，要么用try-catch捕获，要么用throws抛出，否则编译器不会通过，
+    不受检查异常：编译器不要求强制处置的异常，包括运行时异常（RuntimeException）和错误（Error）。
+    运行时异常：不受检查异常。
 32、finally块一定会执行吗？
+    一般情况下会会执行。
+    1）System.exit(0); 在try或catch块中，则不会执行。在执行finally之前虚拟机被停止。
+    2）被设置为守护线程的内部代码的finally可能不会被执行。守护线程随着非守护线程的退出而退出，可能线程退出而还没执行到finally。
 
 33、正常情况下，当在try块或catch块中遇到return语句时，finally语句块在方法返回之前还是之后被执行？
-
+    finally中有return：先执行到try或catch中的return语句，然后跳转到finally中执行return，此时直接返回，不会再去执行try或catch中的return。
+    finally中没有return：先执行到try或catch中的return语句，然后在跳转到finally块执行语句，然后再跳转回try或catch块执行return。
 34、try、catch、finally语句块的执行顺序。
-
+    1）finally一定最后执行。
+    2）无异常：try执行，finally执行，finally之后的语句执行。
+    3）有异常：
+            catch能捕获：try中语句执行到异常时，跳转到catch中执行，最后执行finally中的语句，但是finally之后的语句不会被执行。
+            catch不能捕获：try中语句执行到异常时，此时catch无法捕获，则交给jvm处理，但是finally中的语句还是会被执行。
 35、Java虚拟机中，数据类型可以分为哪几类？
-
+    基本类型和引用类型。
+    基本类型的变量保存原始值；引用类型的变量保存引用值。
+    https://www.cnblogs.com/cxzdy/p/5388509.html
 36、怎么理解栈、堆？堆中存什么？栈中存什么？
 
 37、为什么要把堆和栈区分出来呢？栈中不是也可以存储数据吗？
-
+    堆栈分离，使得堆中的内容可以被多个栈共享，即多线程访问同一个对象。
+    模块化，堆中数据和栈中数据有不同点。
+    https://www.jianshu.com/p/05b4830a0010
 38、在Java中，什么是是栈的起始点，同是也是程序的起始点？
-
+    main()方法。
+    虚拟机栈存放的是栈帧，栈中的栈帧随着方法的进入和退出而有条不紊地执行着出栈和入栈操作。
 39、为什么不把基本类型放堆中呢？
-
+    基本类型占用的空间一般是1~8字节，需要空间比较少，而且因为是基本类型，所以不会出现动态增长（长度固定），因此栈中存储就够了。
+    基本类型和对象的引用都是存放在栈中，而且都是几个字节，因此程序运行时，他们的处理方式是统一的。
+    https://soswm.iteye.com/blog/2272179
 40、Java中的参数传递时传值呢？还是传引用？
 
 41、Java中有没有指针的概念？
-
+    java中没有指针，但java中有引用。
+    基本类型，值就直接保存在变量中。
+    引用类型，变量中保存的只是实际对象的地址，一般称为“引用”，引用指向实际对象，实际对象保存这内容。
 42、Java中，栈的大小通过什么参数来设置？
 
 43、一个空Object对象的占多大空间？
 
 44、对象引用类型分为哪几类？
-
+    强、软、弱、虚
 45、讲一讲垃圾回收算法。
 
 46、如何解决内存碎片的问题？
