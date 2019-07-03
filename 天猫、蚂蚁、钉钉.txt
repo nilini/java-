@@ -102,6 +102,7 @@ https://blog.csdn.net/varyall/article/details/78657726
     https://www.jianshu.com/p/6c6f396fc88e
 6、怎么理解无界队列和有界队列？
 https://www.cnblogs.com/hujinshui/p/10342897.html
+https://my.oschina.net/u/3999718/blog/3007143
     有界队列：有固定大小的队列。
     无界队列：没有设置固定大小的队列，可以直接入队列，知道溢出，但不会超过Integer.MAX_VALUE。
 7、线程池中的几种重要的参数及流程说明。
