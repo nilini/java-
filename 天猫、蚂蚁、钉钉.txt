@@ -101,12 +101,13 @@ https://blog.csdn.net/varyall/article/details/78657726
     4）PriorityBlockingQueue 具有优先级的无限阻塞队列。
     https://www.jianshu.com/p/6c6f396fc88e
 6、怎么理解无界队列和有界队列？
-https://www.cnblogs.com/hujinshui/p/10342897.html
-https://my.oschina.net/u/3999718/blog/3007143
+    https://www.cnblogs.com/hujinshui/p/10342897.html
+    https://my.oschina.net/u/3999718/blog/3007143
     有界队列：有固定大小的队列。
     无界队列：没有设置固定大小的队列，可以直接入队列，知道溢出，但不会超过Integer.MAX_VALUE。
 7、线程池中的几种重要的参数及流程说明。
-https://www.cnblogs.com/aspirant/p/8628843.html
+    https://reeboo.iteye.com/blog/1936424
+    https://www.cnblogs.com/aspirant/p/8628843.html
     handler：表示当拒绝处理任务时的策略。
     threadFactory：线程工厂，用来创建线程。
     corePoolSize：线程池中允许同时运行的最大线程数。
@@ -123,16 +124,16 @@ https://www.cnblogs.com/aspirant/p/8628843.html
     3）
 
 8、什么是反射机制？
-
+    在运行时获取类的属性和方法，并动态调用类的方法。
 9、说说反射机制的作用。
-
+    不用写死代码，可以动态配置代码。
 10、反射机制会不会有性能问题？
-
+    会有性能问题，不过不用在意，spring中大量使用反射。
 11、你怎么理解http协议？
     https://www.cnblogs.com/wxisme/p/6212797.html
     无状态，每次请求都是独立的。
     基于TCP协议。
-12、说说http协议的工作流程。
+12、说说http协议的工作流程。 
     1）解析ip
     2）建立TCP连接，三次握手
     3）封装数据http数据包，封装tcp数据包。
