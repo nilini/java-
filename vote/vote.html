@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='jquery.js'></script>
+</head>
+<body>
+    <h1>Super Votes</h1>
+    <button id="test">300票start</button>
+    <br>
+    <div id="ret">投票结果：</div>
+    <script>
+        $("#test").click(function name(params) {
+            // var num = $("#num").val();
+            var url = "https://jrwmsjzx.zj96296.com/interfacemarket/votesubmit?terminaltype=TV&voteid=715&voteresult=557";
+            for(var i=3; i<30; i++){
+                var customerno = randomString(28);
+                var customername = username(i);
+                url2 = url + "&customerno=" + customerno + "&customername=" + customername;
+                for(var j=0; j<10; j++){
+                    sleep(3);
+                    $.getJSON(url2, function(data){
+                        alert("Data Loaded: " + data);
+                    });
+                    console.log("微信号："+customername+"1票");
+                    var org = $("#ret").html()+"<br/>"+"微信号："+customername+"投了1票";
+                    $("#ret").html(org);
+                }
+            }
+        });
+        function randomString(len) {
+        　　len = len || 32;
+        　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        　　var maxPos = $chars.length;
+        　　var pwd = '';
+        　　for (i = 0; i < len; i++) {
+        　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        　　}
+        　　return pwd;
+        }
+        function username (i){
+            var mycars = new Array()
+            mycars[0] = "爱情/是我丢掉的垃圾"
+            mycars[1] = "对你真心纯属浪费"
+            mycars[2] = "可以哭但决不认输i";
+            mycars[3] = "霸刀☆藐视天下"
+            mycars[4] = "没那资本让你死心踏地"
+            mycars[5] = "世界这么乱装纯给谁看"
+            mycars[6] = "手持菜刀，她持情操"
+            mycars[7] = "虎瘦雄心在"
+            mycars[8] = "家丑人穷心不美"
+            mycars[9] = "年少轻狂不懂胜者为王i"
+            mycars[10] = "兄弟一词,经得起流年. "
+            mycars[11] = "地球回转人心会变"
+            mycars[12] = "我想做一个坏孩纸"
+            mycars[13] = "成全新的幸福"
+            mycars[14] = "劳资没心，怎么记你"
+            mycars[15] = "总有贱人想害朕i"
+            mycars[16] = "深拥你入怀ii"
+            mycars[17] = "瘾男"
+            mycars[18] = "人贱无极限越贱越亮点"
+            mycars[19] = "坐在坟头调戏鬼丿"
+            mycars[20] = "总有逗比挑衅本尊i"
+            mycars[21] = "末代情人"
+            mycars[22] = "圈子不同别硬触"
+            mycars[23] = "终遇你"
+            mycars[24] = "吃醋是最诚实的告白"
+            mycars[25] = "如果可以"
+            mycars[26] = "你不爱我，这是病，得治"
+            mycars[27] = "ゆ久醉绕心弦"
+            mycars[28] = "霸刀☆藐视天下"
+            mycars[29] = "认真的雪"
+
+            return mycars[i];
+        }
+        function sleep(n) {
+            n = n*1000;
+            var start = new Date().getTime();
+            while(true)  if(new Date().getTime()-start > n) break;
+        }
+    </script>
+</body>
+</html>
