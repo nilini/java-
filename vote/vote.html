@@ -17,20 +17,44 @@
         $("#test").click(function name(params) {
             // var num = $("#num").val();
             var url = "https://jrwmsjzx.zj96296.com/interfacemarket/votesubmit?terminaltype=TV&voteid=715&voteresult=557";
-            for(var i=3; i<30; i++){
+            var k=0;
+            var url_arr = new Array();
+            for(var i=0; i<50; i++){
                 var customerno = randomString(28);
                 var customername = username(i);
                 url2 = url + "&customerno=" + customerno + "&customername=" + customername;
                 for(var j=0; j<10; j++){
-                    sleep(3);
+                    url_arr[k++] = url2;
+                }
+            }
+            for (index = 0; index < url_arr.length*100; index++) {
+                var r = Math.floor(Math.random()*299);
+                var r2 = Math.floor(Math.random()*299);
+                var r2_v = url_arr[r2];
+                url_arr[r2] = url_arr[r];
+                url_arr[r] = r2_v;
+            }
+            for (index = 0; index < url_arr.length; index++) {
+                if(url_arr[index] != undefined){
+                    var url2 = url_arr[index];
+                    var rr = Math.floor(Math.random() * (6 - 3)) + 3
+                    sleep(rr);
                     $.getJSON(url2, function(data){
                         alert("Data Loaded: " + data);
                     });
-                    console.log("微信号："+customername+j+"票");
-                    var org = $("#ret").html()+"<br/>"+"微信号："+customername+"投了1票";
+                    console.log(url2);
+                    var org = $("#ret").html()+"<br/>"+url2;
                     $("#ret").html(org);
                 }
             }
+            // console.log(url_arr);
+            // sleep(5);
+            //         $.getJSON(url2, function(data){
+            //             alert("Data Loaded: " + data);
+            //         });
+            //         console.log("微信号："+customername+j+"票");
+            //         var org = $("#ret").html()+"<br/>"+"微信号："+customername+"投了1票";
+            //         $("#ret").html(org);
         });
         function randomString(len) {
         　　len = len || 32;
@@ -44,36 +68,36 @@
         }
         function username (i){
             var mycars = new Array()
-            mycars[0] = "安静的美男子"
-            mycars[1] = "joy"
-            mycars[2] = "jasper";
-            mycars[3] = "jecky"
-            mycars[4] = "lily"
-            mycars[5] = "meng"
-            mycars[6] = "nonono"
-            mycars[7] = "安静"
-            mycars[8] = "吼新华"
-            mycars[9] = "dz1016"
-            mycars[10] = "genie ll "
-            mycars[11] = "alex wang"
-            mycars[12] = "kiko"
-            mycars[13] = "aaaaaaamy"
-            mycars[14] = "zyzzzzzzzz"
-            mycars[15] = "jjyyhh"
-            mycars[16] = "2.7"
-            mycars[17] = "jyw0011"
-            mycars[18] = "ss1120"
-            mycars[19] = "诺小米"
-            mycars[20] = "beckyi"
-            mycars[21] = "ddamy"
-            mycars[22] = "dz0504"
-            mycars[23] = "终遇你"
-            mycars[24] = "诚实"
-            mycars[25] = "如果"
-            mycars[26] = "jhq853506"
-            mycars[27] = "asd87679909"
-            mycars[28] = "wss0909"
-            mycars[29] = "bxq1011"
+            mycars[0] = "不将就的美男子"
+            mycars[1] = "不讲究"
+            mycars[2] = "源源per";
+            mycars[3] = "摆渡人"
+            mycars[4] = "bee"
+            mycars[5] = "aroes"
+            mycars[6] = "bebebeb"
+            mycars[7] = "糖糖"
+            mycars[8] = "同堂"
+            mycars[9] = "欧货"
+            mycars[10] = "小城美伊 "
+            mycars[11] = "惠子"
+            mycars[12] = "liu"
+            mycars[13] = "bbbbbaby"
+            mycars[14] = "小喜哦"
+            mycars[15] = "小言"
+            mycars[16] = "雄安严加"
+            mycars[17] = "四件套"
+            mycars[18] = "monkey"
+            mycars[19] = "小鹿"
+            mycars[20] = "阿土"
+            mycars[21] = "小南瓜"
+            mycars[22] = "宝妈"
+            mycars[23] = "终点"
+            mycars[24] = "诚"
+            mycars[25] = "日落"
+            mycars[26] = "ZHUBEU"
+            mycars[27] = "AJ"
+            mycars[28] = "星辰"
+            mycars[29] = "zzz111111"
 
             return mycars[i];
         }
