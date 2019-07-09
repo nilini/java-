@@ -7,3 +7,36 @@
     当用户查询时，检索程序就根据事先建立的索引进行查找。
 4、Lucene全文索引
     Lucene全文索引就是对文档中全部内容进行分词，然后对所有单词建立到排序的过程。
+5、Elasticsearch
+    Elasticsearch使用java编写，内部使用Lucene做索引与搜索，它的目的是使用全文检索变得简单，
+    通过隐藏Lucene的复杂性，取而代之的提供一套简单一致的RestFul API。
+    特点：
+        1）一个分布式的实时文档存储，每个字段可以被索引与搜索。
+        2）一个分布式实时分析搜索引擎。
+        3）能够胜任上百个服务节点的拓展，并支持PB级别的结构化或者非结构化数据。
+6、Elasticsearch存储构成
+    索引：类似关系数据库中的一个数据库，是一个存储关系型文档的地方。
+    文档：json数据。
+    倒排索引：关系型数据库通过增加一个索引（比如一个B树索引到指定的列上），以便提升数据检索速度。
+             Elasticsearch和Lucene使用了一个叫做倒排索引的结构来达到相同的目的。
+             默认地，一个文档中的每一个属性都是被索引的和可搜索的，一个没有倒排序的属性是不能被搜索到的。
+7、示例
+    索引megacorp公司的雇员信息。
+    每个雇员索引一个文档，包含该雇员的所有信息。
+    每个文档都将是 employee 类型。
+    该类型位于索引 megacorp 内。
+    该索引保存在我们的 Elasticesearch 集群中。
+    该索引保存在Elasticsearch集群中。
+    PUT /megacorp/employee/1
+    {
+        "first_name" : "John",
+        "last_name" :  "Smith",
+        "age" :        25,
+        "about" :      "I love to go rock climbing",
+        "interests": [ "sports", "music" ]
+    }
+    路径 /megacorp/employee/1 包含了三部分：
+    megacorp 索引名称
+    employee 类型名称
+    1        特定雇员的ID
+    
