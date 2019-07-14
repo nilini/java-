@@ -1,0 +1,115 @@
+1、文档
+    json数据
+2、索引一个文档
+    PUT /{index}/{type}/{id}
+    {
+    "field": "value",
+    ...
+    }
+    ==========================
+    PUT /website/blog/123
+    {
+    "title": "My first blog entry",
+    "text":  "Just trying this out...",
+    "date":  "2014/01/01"
+    }
+    响应：
+    {
+        "_index":    "website",
+        "_type":     "blog",
+        "_id":       "123",
+        "_version":  1,
+        "created":   true
+    }
+3、取回一个文档
+    GET /website/blog/123
+    返回文档原始json：GET /website/blog/123?_source
+    返回文档的一部分：GET /website/blog/123?_source=title,text
+4、检查文档是否存在
+    HEAD /website/blog/123
+    没有返回体，只返回HTTP请求报头。文档存在返回200，不存在返回404。
+5、更新整个文档
+    文档不能被修改，只能替换。
+    PUT /website/blog/123
+    {
+    "title": "My first blog entry",
+    "text":  "I am starting to get the hang of this...",
+    "date":  "2014/01/02"
+    }
+    响应结果中_version字段会递增，created为false。
+    旧文档不会立即被删除，当索引更多的数据时候，Elasticsearch会在后台清理这些已删除文档。
+6、创建新文档
+    使用Elastiasearch生成集群唯一_id:
+    POST /website/blog/
+    { ... }
+
+    如果有自己的_id：
+    1） PUT /website/blog/123?op_type=create
+        { ... }
+    2）PUT /website/blog/123/_create
+        { ... }
+    这两种方法并不会覆盖原有文档，不存在则创建，存在则不创建。
+7、删除文档
+    DELETE /website/blog/123
+    删除时不会立即删除，只会标记状态为已删除。随着不断的索引更多的数据，后台会自动删除。
+8、处理冲突
+    两个并发读取商品数量后，分别减一后再更新。就会导致商品更新混乱。
+    Elasticsearch中使用乐观并发控制，假定冲突是不可能发生的，不会阻塞正在尝试的操作，数据在
+    读写当中被修改，更新将会失败。
+9、乐观并发控制
+    Elasticsearch是分布式的。当文档创建、更新或删除时，新版本的文档必须复制到集群中的其他节点。
+    Elasticsearch也是异步和并发的，数据到达目的地时顺序可能是乱的。Elasticsearch使用版本号_version来确保数据顺序。
+    旧版本的文档在新版本之后到达，它可以被简单的忽略。
+    
+    可以通过指定想要修改文档的version来保证应用中相互冲突的变更不会导致数据丢失。版本号不是当前版本号，请求失败。
+    PUT /website/blog/1?version=1  
+    {
+    "title": "My first blog entry",
+    "text":  "Starting to get the hang of this..."
+    }
+
+    注：指定版本号
+    PUT /website/blog/2?version=5&version_type=external
+    指定版本号的时候，Elasticsearch不会像使用内部版本号那样（版本号必须相同），而是只要新的版本号大于或等于旧版本号。
+10、文档的部分更新
+    POST /website/blog/1/_update
+    {
+        "doc" : {
+            "tags" : [ "testing" ],
+            "views": 0
+        }
+    }
+    为json文档添加"tags" : [ "testing" ], "views": 0
+11、取回多个文档
+    批量操作。
+    GET /_mget
+    {
+        "docs" : [
+            {
+                "_index" : "website",
+                "_type" :  "blog",
+                "_id" :    2
+            },
+            {
+                "_index" : "website",
+                "_type" :  "pageviews",
+                "_id" :    1,
+                "_source": "views"
+            }
+        ]
+    }
+    或
+    GET /website/blog/_mget
+    {
+        "ids" : [ "2", "1" ]
+    }
+12、批量操作
+    POST /_bulk
+    { "delete": { "_index": "website", "_type": "blog", "_id": "123" }} 
+    { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "title":    "My first blog post" }
+    { "index":  { "_index": "website", "_type": "blog" }}
+    { "title":    "My second blog post" }
+    { "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
+    { "doc" : {"title" : "My updated blog post"} } 
+
