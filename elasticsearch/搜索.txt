@@ -1,0 +1,98 @@
+1、空搜索
+    返回所有数据。
+    GET /_search
+    响应
+    {
+        "took": 143,
+        "timed_out": false,
+        "_shards": {
+            "total": 4,
+            "successful": 4,
+            "skipped": 0,
+            "failed": 0
+        },
+        "hits": {
+            "total": {
+                "value": 5,
+                "relation": "eq"
+            },
+            "max_score": 1,
+            "hits": [
+                {
+                    "_index": "index",
+                    "_type": "_doc",
+                    "_id": "1",
+                    "_score": 1,
+                    "_source": {
+                        "content": "美国留给伊拉克的是个烂摊子吗"
+                    }
+                },
+                {
+                    "_index": "index",
+                    "_type": "_doc",
+                    "_id": "2",
+                    "_score": 1,
+                    "_source": {
+                        "content": "公安部：各地校车将享最高路权"
+                    }
+                },
+                {
+                    "_index": "index",
+                    "_type": "_doc",
+                    "_id": "3",
+                    "_score": 1,
+                    "_source": {
+                        "content": "中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"
+                    }
+                },
+                {
+                    "_index": "index",
+                    "_type": "_doc",
+                    "_id": "4",
+                    "_score": 1,
+                    "_source": {
+                        "content": "中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"
+                    }
+                },
+                {
+                    "_index": "website",
+                    "_type": "blog",
+                    "_id": "1",
+                    "_score": 1,
+                    "_source": {
+                        "title": "My first blog entry",
+                        "text": "Just trying this out...1111111",
+                        "date": "2014/01/01"
+                    }
+                }
+            ]
+        }
+    }
+    hits：返回前十个
+    timeout可指定超时：GET /_search?timeout=10ms
+2、多索引、多类型
+    /_search
+    在所有的索引中搜索所有的类型
+    /gb/_search
+    在 gb 索引中搜索所有的类型
+    /gb,us/_search
+    在 gb 和 us 索引中搜索所有的文档
+    /g*,u*/_search
+    在任何以 g 或者 u 开头的索引中搜索所有的类型
+    /gb/user/_search
+    在 gb 索引中搜索 user 类型
+    /gb,us/user,tweet/_search
+    在 gb 和 us 索引中搜索 user 和 tweet 类型
+    /_all/user,tweet/_search
+    在所有的索引中搜索 user 和 tweet 类型
+3、分页
+    GET /_search?size=5
+    GET /_search?size=5&from=5
+    GET /_search?size=5&from=10
+    考虑到分页过深以及一次请求太多结果的情况，结果集在返回之前先进行排序。 但请记住一个请求经常跨越多个分片，每个分片都产生自己的排序结果，这些结果需要进行集中排序以保证整体顺序是正确的。
+4、轻量级搜索
+    两种形式的搜索API:
+    1）"轻量级的"查询字符串版本
+        GET /_all/tweet/_search?+name:(mary john) +date:>2014-09-10 +(aggregations geo)
+        name字段中包含mary或john，date值大于2014-09-10，_all字段包含agregations或geo。
+    2）请求体版本，要求使用JSON格式和更丰富的查询表达式作为搜索语言。
