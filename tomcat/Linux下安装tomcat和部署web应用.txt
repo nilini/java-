@@ -1,0 +1,19 @@
+1、下载安装并解压tomcat
+    curl -o tomcat-9.0.22.tar.gz http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-9/v9.0.22/bin/apache-tomcat-9.0.22.tar.gz
+    tar -zxvf tomcat-9.0.22.tar.gz 
+2、配置环境变量
+    /etc/profile
+
+3、修改tomcat服务器的启动端口
+    /apache-tomcat-9.0.22/conf/server.xml
+
+4、启动tomcat
+    /apache-tomcat-9.0.22/bin/startup.sh
+
+5、关闭tomcat
+    /apache-tomcat-9.0.22/bin/shutdown.sh
+
+6、部署JavaWeb应用到Tomcat服务器
+    1、部署JavaWeb应用到Tomcat服务器就是将开发好的JavaWeb的应用打包成war包，然后发布到tomcat服务器的webapps目录下。tomcat服务器自动加压缩war包。
+    2、将war包所需要的jar包上传到tomcat服务器的lib目录
+7、

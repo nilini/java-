@@ -1,0 +1,7 @@
+1、Tomcat的缺省配置
+    /conf/server.xml
+    <Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443" uriEncoding="utf-8"/>
+
+2、Tomcat有哪几种Connector运行模式？
+    
+、Tomcat的工作模式和运行模式

@@ -1,0 +1,21 @@
+1、Tomcat 总体结构
+    模块化。
+    Server：Tomcat中最顶层的容器是 Server，代表着整个服务器。一个Server可以包含至少一个Service。
+    Service：主要包含 Connector 和 Container。一个Service只有一个Container，但是可以有多个Connectors，这是因为一个服务有多个连接，如同时提供http和https连接，也可以提供相同协议不同端口的连接。
+    Connector：用于处理连接相关的事情，并提供Socket与Request和Response相关的转化。
+    Container：用于封装和管理Servlet，以及具体处理Request请求。
+
+2、生命周期
+    多个Connector和一个Container构成了一个Service，有了Service就可以堆外提供服务了，但是Service还要一个生存的环境，所以整个Tomcat的生命周期由Server控制。
+
+3、请求处理流程
+    1）一个请求到达Tomcat；
+    2）经过Service然后交给Connector，Connector用于接收请求并将接收的请求封装为Request和Response来具体处理；
+    3）Connector将封装后的请求缴费Container处理，处理完后再返回给Connector；
+    4）Connector通过Socket将处理的结果返回给客户端。
+    Connector最底层使用的是Socket来进行连接，Request和Response是按照http协议来封装，所以Connector同时需要实现TCP/IP协议和HTTP协议。
+
+4、Container架构
+    Container用于封装和管理Servlet，以及具体处理Request请求。
+    Container包含多个Host。Host包含多个Context。Context包含多个Wrapper。
+    每个Host代表一个虚拟主机，每个Context代表一个应用，每个Wrapper封装这一个Servlet。
