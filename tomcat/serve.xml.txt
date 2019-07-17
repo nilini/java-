@@ -1,0 +1,15 @@
+1、几个端口
+    <Server port="8005" shutdown="SHUTDOWN"> 可远程telent到服务器，关闭tomcat。可以修改“SHUTDOWN”为其他字符串。在新版的 Tomcat 中该端口仅监听在127.0.0.1上，
+    <Connector port="8080" protocol="HTTP/1.1" redirectPort="8443" URIEncoding="utf-8"/>
+    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol" maxThreads="150" SSLEnabled="true" scheme="https" secure="true" clientAuth="false" sslProtocol="TLS" />
+    AJP/1.3 协议，用于监听其他服务器转发过来的请求。AJP是为 Tomcat 与 HTTP 服务器之间通信而定制的协议，能提供较高的通信速度和效率。如果tomcat前端放的是apache的时候，会使用到AJP这个连接器。由于我们公司前端是由nginx做的反向代理，因此不使用此连接器，因此需要注销掉该连接器。
+    HTTP/1.1 协议，用于监听http协议请求。
+    redirectPort如果发送的是https请求，就将请求转发到8443端口。
+2、war自动部署
+    默认war是自动部署，为了防止被植入木马等恶意程序，因此我们要关闭自动部署。
+    <Host name="localhost"  appBase="" unpackWARs="false" autoDeploy="false">
+
+3、用普通用户启动Tomcat
+    为了进一步安全，不建议使用root来启动tomcat。使用专用用户tomcat或者nobody用户来启动Tomcat。
+    在启动之前，需要对tomcat安装目录下所有文件的属主和属组都设置为指定用户。

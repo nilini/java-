@@ -1,0 +1,7 @@
+1、动静分离
+    让Tomcat只负责jsp文件的解析工作。
+
+2、Connector连接器的配置
+    Tomcat连接器的三种方式：bio、nio、apr。apr性能最优，bio性能最差。而 Tomcat 7 使用的 Connector  默认就启用的 Apr 协议，但需要系统安装 Apr 库，否则就会使用 bio 方式。
+
+3、
