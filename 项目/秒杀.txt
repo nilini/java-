@@ -1,0 +1,4 @@
+1、架构
+    nginx前台服务器，负载均衡到tomcat服务器。
+2、nginx设置
+    加权轮询负载到tomcat服务器。
