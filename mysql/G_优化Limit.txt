@@ -1,0 +1,11 @@
+limit 1000,20 这时，mysql需要查询1020条记录然后只返回最后20条，前面1000条记录都将被抛弃。
+
+1、优化分页查询的一个最简单的方法是尽可能地使用索引覆盖扫描，而不是查询所有的列，然后根据需要做一次关联操作再返回所需的列。
+将 
+select film_id,descript from film order by title limit 50,5 
+优化为：
+seelct film_id,descript from film inner join(select film_id from film order by title limit 50,5) as lim using(film_id);  
+这里的“延迟关联将大大提升查询效率”，让mysql扫描尽可能少的页面，获取需要访问的记录后再根据关联列回原表查询所需要的所有列。
+
+2、将limit查询转换为已知位置的查询。如:select film_id from film where film_id>50 limit 5
+
