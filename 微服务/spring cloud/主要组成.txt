@@ -1,0 +1,11 @@
+Spring Cloud的各个项目基于Spring Boot，将Netflix的多个框架进行封装，通过自动配置的方式将这些框架绑定到Spring环境中。
+Eureka：基于REST服务的分布式中间件，主要用于服务管理（发现）。
+Hystrix：容错框架，通过添加延迟阈值以及容错的逻辑，帮助我们控制分布式系统间组件的交互。
+Feign：一个REST客户端，目的是为了简化Web Service客户端的开发。
+Ribbon：负载均衡框架，在微服务集群中为各个客户端的通信提供支持，它只要实现中间层应用程序的负载均衡。
+Zull：为微服务集群提供代理、过滤、路由等功能。
+其他模块：
+Spring Cloud Config：为分布式系统提供了配置服务器和配置客户端，通过对他们的配置，可以很好的管理集群中的配置文件。
+Spring Cloud Sleuth：服务跟踪框架，可以与Zipkin、Apache HTrace和ELK等数据分析、服务跟踪系统进行整合，为服务跟踪、解决问题提供了便利。
+Spring Cloud Strean：用于构建消息驱动微服务的框架，在Spring Boot的基础上，整合了Spring Integration来连接消息代理中间件。
+Spring Cloud Bus：连接RabbitMQ、Kafka等消息代理的集群消息总线。
