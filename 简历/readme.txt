@@ -1,9 +1,10 @@
-*JAVA 基础扎实，对 JVM 有一定了解，能对 JVM 做性能分析及调优。
+*对 JVM 有一定了解，能对 JVM 做性能分析及调优。
 *熟悉Spring、SpringMVC、SpringBoot、SpringClound等spring家族框架，熟悉ORM框架：MyBatis、Hibernate。
 *熟悉Redis的使用场景及原理，熟练搭建redis集群。
 *熟悉sql语句，熟悉mysql索引优化、事务、锁，了解mysql的主从搭建、读写分离、分表等业务。
 *熟练搭建Zookeeper，ActiveMq队列集群实现高可用。
 *熟悉Nginx、Tomcat 部署和配置，熟悉 Nginx 负载均衡，Tomcat 调优。
+*熟悉多线程，NIO，集合
 *了解HTML/CSS、JavaScript、jQuery、Ajax等前端技术。
 *熟练使用版本控制工具：svn、git。
 *了解ElasticSearch。
@@ -59,8 +60,9 @@
     
     实现：
     1、logstach收集nginx的访问日志、错误日志，log4j收集网站日志并发送给logstach，logstach将日子再
-    2、系统定时去ElasticSearch中取日志数据分析，存入mysql。
-    3、开发人员可订阅相关日志，日志如有异常可通过根据异常严重性而通过短信、邮件、钉钉通知的方式通知相关人员。
+    2、收集mysql的错误日志、慢查询日志。定时获取mysql的流量信息、连接信息、死锁信息、查询数量、事务数量
+    3、系统定时去ElasticSearch中取日志数据分析，存入mysql。
+    4、开发人员可订阅相关日志，日志如有异常可通过根据异常严重性而通过短信、邮件、钉钉通知的方式通知相关人员。
 
-    个人主要负责logstach、ElasticSearch搭建维护，及日志收集。
+    个人主要负责logstach、ElasticSearch搭建维护。
     日志异常订阅、通知、追踪的实现

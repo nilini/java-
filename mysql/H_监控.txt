@@ -1,0 +1,38 @@
+每秒查询量QPS
+Questions = SHOW GLOBAL STATUS LIKE 'Questions';
+Uptime = SHOW GLOBAL STATUS LIKE 'Uptime'; -- 查询当前MySQL本次启动后的运行统计时间
+QPS=Questions/Uptime
+
+每秒事务量TPS
+Com_commit = SHOW GLOBAL STATUS LIKE 'Com_commit';
+Com_rollback = SHOW GLOBAL STATUS LIKE 'Com_rollback';
+Uptime = SHOW GLOBAL STATUS LIKE 'Uptime';
+TPS=(Com_commit + Com_rollback)/Uptime
+
+增删改查的分量
+show [global] status like 'com_select'; --查看select语句的执行数
+show [global] status like 'com_insert'; --查看insert语句的执行数
+show [global] status like 'com_update'; --查看update语句的执行数
+show [global] status like 'com_delete'; --查看delete语句的执行数
+
+慢查询
+连接数、正在使用的连接数、最大连接数
+show status like 'threads_running';   --查看激活的(非睡眠状态)线程数。
+show status like 'threads_connected'; --查看当前打开的连接的数量。
+show variables like '%max_connections%'; -- 最大连接数
+
+流量统计
+show status like 'Bytes_received'; --接收的流量
+show status like 'Bytes_sent'; --发送的流量
+
+慢查询日志
+
+错误日志
+
+死锁
+    当前运行的所有事务
+    select * from information_schema.innodb_trx
+    当前出现的锁
+    select * from information_schema.innodb_locks
+    锁等待的对应关系
+    select * from information_schema.innodb_lock_waits  
