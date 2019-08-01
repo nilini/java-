@@ -1,7 +1,7 @@
-*对 JVM 有一定了解，能对 JVM 做性能分析及调优。
+*对JVM 有一定了解，能对 JVM 做性能分析及调优。
 *熟悉Spring、SpringMVC、SpringBoot、SpringClound等spring家族框架，熟悉ORM框架：MyBatis、Hibernate。
 *熟悉Redis的使用场景及原理，熟练搭建redis集群。
-*熟悉sql语句，熟悉mysql索引优化、事务、锁，了解mysql的主从搭建、读写分离、分表等业务。
+*熟悉sql语句，熟悉mysql索引优化、事务、锁，了解mysql的主从搭建、读写分离、分表分库等业务。
 *熟练搭建Zookeeper，ActiveMq队列集群实现高可用。
 *熟悉Nginx、Tomcat 部署和配置，熟悉 Nginx 负载均衡，Tomcat 调优。
 *熟悉多线程，NIO，集合
