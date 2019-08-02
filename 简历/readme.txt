@@ -1,10 +1,10 @@
 *对JVM 有一定了解，能对 JVM 做性能分析及调优。
-*熟悉Spring、SpringMVC、SpringBoot、SpringClound等spring家族框架，熟悉ORM框架：MyBatis、Hibernate。
+*熟悉Spring、SpringMVC、SpringBoot、SpringClound（微服务组件Eureka、Ribbon、Zull等），熟悉MyBatis，了解Hibernate。
 *熟悉Redis的使用场景及原理，熟练搭建redis集群。
 *熟悉sql语句，熟悉mysql索引优化、事务、锁，了解mysql的主从搭建、读写分离、分表分库等业务。
 *熟练搭建Zookeeper，ActiveMq队列集群实现高可用。
 *熟悉Nginx、Tomcat 部署和配置，熟悉 Nginx 负载均衡，Tomcat 调优。
-*熟悉多线程，NIO，集合
+*熟悉多线程，NIO，集合等java基础。
 *了解HTML/CSS、JavaScript、jQuery、Ajax等前端技术。
 *熟练使用版本控制工具：svn、git。
 *了解ElasticSearch。
@@ -40,29 +40,30 @@
     云饰衣是一个多商户商城平台，有两前端和两后台，微信小程序端和手机H5端，商家后台和平台后台。
     前台主要有商城首页、商品详情页、分类页、个人中心、购物页、支付页、3D是试衣间等，
     后台主要包括商品模块、订单模块、用户模块、权限模块、3D模型模块、商家管理模块。
+    使用spring cloud搭建了微服务
     
     技术描述：
         1、spring cloud微服务 + 消息队列。
         2、短信服务、邮件服务、站内通知服务、订单库存等使用消息队列来处理。
         3、使用spring secrity框架实现了权限管理。
-        4、微信支付、支付宝支付。
-        5、
     主要负责：
         1、购物车、支付模块。
         2、微信支付、支付宝支付对接。
         3、小程序相关api（注册、获取小程序码等）。
         4、使用spring secrity框架实现了权限管理。
         5、使用Jmeter对暴露给前端的接口进行了压力测试，并不断调整tomcat容器配置到最优。
-        6、在nginx中配置限流模块，对外接口使用redis缓存限制接口访问频次，tomcat容器优化keepalive等参数限制请求处理的并发量。
+        6、在nginx中配置限流模块、负载均衡等，对外接口使用redis缓存限制接口访问频次，tomcat容器优化keepalive等参数限制请求处理的并发量。
+        7、配置微服务Eureka、Ribbo、Hystrix、Zuul等spring cloud组件。
 2、日志监控分析系统
-    该系统是一个能收集监控nginx日志、tomcat日志、网站日志的综合系统。通过ElasticSearch集群处理网站、服务器产生的大量日志，
-    分析出PV、UV、访问的IP数等用户访问数据，以及网站日志。
+    该系统是一个能收集监控nginx日志、tomcat日志、网站日志、mysql的综合系统。通过ElasticSearch集群处理网站、服务器产生的大量日志，
+    异常日志通知相关人员，并创建异常日志工单供跟踪及日后查看。使用ECharts构建日志可视化，可
     
     实现：
-    1、logstach收集nginx的访问日志、错误日志，log4j收集网站日志并发送给logstach，logstach将日子再
-    2、收集mysql的错误日志、慢查询日志。定时获取mysql的流量信息、连接信息、死锁信息、查询数量、事务数量
+    1、logstach收集nginx日志，网站应用日志，tomcat日志，mysql日志。
+    2、定时获取所监控mysql的流量信息、连接信息、死锁信息、查询数量、事务数量。
     3、系统定时去ElasticSearch中取日志数据分析，存入mysql。
     4、开发人员可订阅相关日志，日志如有异常可通过根据异常严重性而通过短信、邮件、钉钉通知的方式通知相关人员。
 
     个人主要负责logstach、ElasticSearch搭建维护。
-    日志异常订阅、通知、追踪的实现
+    定时获取所监控mysql的查询量、事务量、增删改查的分量、慢查询、错误日志、连接数量等，整理数据入库，并提供数据可视化接口。
+    日志异常通知（短信、邮件、钉钉）。

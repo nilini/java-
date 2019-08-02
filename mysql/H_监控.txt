@@ -15,7 +15,6 @@ show [global] status like 'com_insert'; --查看insert语句的执行数
 show [global] status like 'com_update'; --查看update语句的执行数
 show [global] status like 'com_delete'; --查看delete语句的执行数
 
-慢查询
 连接数、正在使用的连接数、最大连接数
 show status like 'threads_running';   --查看激活的(非睡眠状态)线程数。
 show status like 'threads_connected'; --查看当前打开的连接的数量。
