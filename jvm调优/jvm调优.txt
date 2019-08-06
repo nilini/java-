@@ -1,0 +1,56 @@
+Minor GC 和 Full GC。
+stop the world 在独占式的垃圾回收器中，整个应用程序会被停止，直到垃圾回收的完成。
+GC耗时长、GC频率高则必须优化。
+以下不需要优化：
+    1、Minor GC执行时间不到50ms。
+    2、Minor GC执行不频繁，约10秒一次。
+    3、Full GC执行时间不到1s。
+    4、Full GC执行频率不算频繁，不低于10分钟一次。
+
+需要关注的参数：
+1、当前使用的垃圾收集器
+2、Java堆的大小
+3、新生代、老年代、永久代的大小
+4、Minor GC的持续时间
+5、Minor GC的频率
+6、Full GC的持续时间
+7、Full GC的频率
+8、垃圾收集前后Java堆、新生代、老年代、永久代的占用量
+
+GC垃圾回收报告分析
+参数：
+-verbosegc 记录每次gc的日志
+-XX:+PrintGCDetails 打印GC详细信息
+-XX:+PrintGC 打印GC信息
+-XX:+PrintGCTimeStamps 打印时间戳
+-XX:+PrintHeapAtGC 打印堆信息
+-Xloggc:/home/admin/logs/gc.log gc日志位置
+
+JDK版本默认垃圾收集器
+jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Serial Old（老年代）
+jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Serial Old（老年代）
+jdk1.9 默认垃圾收集器G1
+jdk10 默认垃圾收集器G1
+
+==============================================
+调优目标
+期望垃圾回收频率减少，回收中断时间减少。
+
+java堆参数：
+-Xmx 最大堆大小
+-Xms 最小堆大小
+
+年轻代大小定义参数：
+-Xmn 年轻代大小
+-XX:NewRaito 年轻代和年老代的比例值
+-XX:SurvivorRaito 设置年轻代中Eden和Survivor区的比值
+
+持久代大小定义参数：
+-XX:PermSize 启动时候持久代大小
+-XX:MaxPermSize 持久代最大可占用大小
+
+===============================================
+1、降低Full GC执行频率：
+    1）System.gc()调用后，jvm会在适当的时候 Full GC。应该让jvm自己自己去管理内存。可通过-XX:+ DisableExplicitGC来禁止RMI调用System.gc。
+
+    https://blog.csdn.net/toella/article/details/7310380
