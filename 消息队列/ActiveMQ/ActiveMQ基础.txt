@@ -1,8 +1,11 @@
 1、两种消息模式
     点对点(queue)和订阅(topic)。
+    JMS中有两种消息通信模型，点对点和发布订阅模型，ActiveMq实现了JMS接口，同时ActiveMq也实现了这两种模型。
+    p2p模型规定一个消息只能有一个接收者，而pub/sub模型允许一个消息可以有多个消息接收者。
 
 2、点对点模式
-    使用队列，可以多个发送端，多个接收端，一条消息只会被一个接收端接收到。
+    生产者产生一个消息时，会把消息放入到一个队列（Queue）中，然后消息消费者从Queue中读取消息，如果同时有多个消费者读取消息，ActiveMq保证消息只会被一个消费者读取，
+    消费者读取之后需要AM发送一条确认消息，确认消息已经被接收，此时，队列中的消息出队。
 
 3、订阅模式
     可以有多个发送端和多个接收端，所有的接收端都可以接收到消息。消息发出后必须有接收端在线，否则消息就丢失了。
@@ -14,10 +17,16 @@
     
     CLIENT_ACKNOWLEDGE 模式。
     session = connection.createSession();
-    如果接收端不确认消息，那么ActiveMQ就会将这条消息一直保留，知道有一个接收端确定了消息。
+    如果接收端不确认消息，那么ActiveMQ就会将这条消息一直保留，直到有一个接收端确定了消息。
     在接收端接收到消息的时候，调用javax.jms.Message的acknowledge方法：message.acknowledge();
     这样，当消息处理成功之后，确认消息，如果不确定，activemq将会发给下一个接收端处理。
     只在点对点中有效，订阅模式，即使不确认，也不会保存消息。
+    =======
+    1) message.acknowledge()，
+    2) ActiveMQMessageConsumer.acknowledege()，
+    3) ActiveMQSession.acknowledge()；
+    其1)和3)是等效的，将当前session中所有consumer中尚未ACK的消息都一起确认，2)只会对当前consumer中那些尚未确认的消息进行确认。
+    ========
 
 5、主动接收消息
     设置监听器，监听消息的传递，只要有消息就会即时传递到程序中。
@@ -77,3 +86,9 @@
     LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库，由Google发起并开源。
     LevelDB只能由本操作系统的其他进程调用，所以它不具有网络性。
     如果您需要网络上的远程进程操作LevelDB，那么就要自行封装服务层。
+
+11、预取 prefecthSize
+    消费端预取消息数量，每次消费者从broker拉取至多N条消息到本地内存。
+
+12、自动ACK优化 optimizeAcknowledge
+    当consumer.optimizeACK有效时，如果客户端已经消费但尚未确认的消息(deliveredMessage)达到prefetch * 0.65，consumer端将会自动进行ACK；同时如果离上一次ACK的时间间隔，已经超过"optimizeAcknowledgeTimout"毫秒，也会导致自动进行ACK。

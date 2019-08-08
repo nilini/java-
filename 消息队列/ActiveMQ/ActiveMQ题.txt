@@ -1,173 +1,88 @@
 ActiveMQ面试专题
 1.ActiveMQ服务器宕机怎么办？
-这得从ActiveMQ的储存机制说起。在通常的情况下，非持久化消息是存储在内存中的，持久化消息是存储在文件中的，它们的最大限制在配置文件的<systemUsage>节点中配置。但是，在非持久化消息堆积到一定程度，内存告急的时候，ActiveMQ会将内存中的非持久化消息写入临时文件中，以腾出内存。虽然都保存到了文件里，但它和持久化消息的区别是，重启后持久化消息会从文件中恢复，非持久化的临时文件会直接删除。
-
-那如果文件增大到达了配置中的最大限制的时候会发生什么？我做了以下实验：
-
-设置2G左右的持久化文件限制，大量生产持久化消息直到文件达到最大限制，此时生产者阻塞，但消费者可正常连接并消费消息，等消息消费掉一部分，文件删除又腾出空间之后，生产者又可继续发送消息，服务自动恢复正常。
-
-设置2G左右的临时文件限制，大量生产非持久化消息并写入临时文件，在达到最大限制时，生产者阻塞，消费者可正常连接但不能消费消息，或者原本慢速消费的消费者，消费突然停止。整个系统可连接，但是无法提供服务，就这样挂了。
-
-具体原因不详，解决方案：尽量不要用非持久化消息，非要用的话，将临时文件限制尽可能的调大。
+    这得从ActiveMQ的储存机制说起。在通常的情况下，非持久化消息是存储在内存中的，持久化消息是存储在文件中的，它们的最大限制在配置文件的<systemUsage>节点中配置。但是，在非持久化消息堆积到一定程度，内存告急的时候，ActiveMQ会将内存中的非持久化消息写入临时文件中，以腾出内存。虽然都保存到了文件里，但它和持久化消息的区别是，重启后持久化消息会从文件中恢复，非持久化的临时文件会直接删除。
+    那如果文件增大到达了配置中的最大限制的时候会发生什么？我做了以下实验：
+    设置2G左右的持久化文件限制，大量生产持久化消息直到文件达到最大限制，此时生产者阻塞，但消费者可正常连接并消费消息，等消息消费掉一部分，文件删除又腾出空间之后，生产者又可继续发送消息，服务自动恢复正常。
+    设置2G左右的临时文件限制，大量生产非持久化消息并写入临时文件，在达到最大限制时，生产者阻塞，消费者可正常连接但不能消费消息，或者原本慢速消费的消费者，消费突然停止。整个系统可连接，但是无法提供服务，就这样挂了。
+    具体原因不详，解决方案：尽量不要用非持久化消息，非要用的话，将临时文件限制尽可能的调大。
 
 2. 丢消息怎么办？
-这得从java的java.net.SocketException异常说起。简单点说就是当网络发送方发送一堆数据，然后调用close关闭连接之后。这些发送的数据都在接收者的缓存里，接收者如果调用read方法仍旧能从缓存中读取这些数据，尽管对方已经关闭了连接。但是当接收者尝试发送数据时，由于此时连接已关闭，所以会发生异常，这个很好理解。不过需要注意的是，当发生SocketException后，原本缓存区中数据也作废了，此时接收者再次调用read方法去读取缓存中的数据，就会报Software caused connection abort: recv failed错误。
-
- 
-
-通过抓包得知，ActiveMQ会每隔10秒发送一个心跳包，这个心跳包是服务器发送给客户端的，用来判断客户端死没死。如果你看过上面第一条，就会知道非持久化消息堆积到一定程度会写到文件里，这个写的过程会阻塞所有动作，而且会持续20到30秒，并且随着内存的增大而增大。当客户端发完消息调用connection.close()时，会期待服务器对于关闭连接的回答，如果超过15秒没回答就直接调用socket层的close关闭tcp连接了。这时客户端发出的消息其实还在服务器的缓存里等待处理，不过由于服务器心跳包的设置，导致发生了java.net.SocketException异常，把缓存里的数据作废了，没处理的消息全部丢失。
-
-解决方案：用持久化消息，或者非持久化消息及时处理不要堆积，或者启动事务，启动事务后，commit()方法会负责任的等待服务器的返回，也就不会关闭连接导致消息丢失了。
+    这得从java的java.net.SocketException异常说起。简单点说就是当网络发送方发送一堆数据，然后调用close关闭连接之后。这些发送的数据都在接收者的缓存里，接收者如果调用read方法仍旧能从缓存中读取这些数据，尽管对方已经关闭了连接。但是当接收者尝试发送数据时，由于此时连接已关闭，所以会发生异常，这个很好理解。不过需要注意的是，当发生SocketException后，原本缓存区中数据也作废了，此时接收者再次调用read方法去读取缓存中的数据，就会报Software caused connection abort: recv failed错误。
+    通过抓包得知，ActiveMQ会每隔10秒发送一个心跳包，这个心跳包是服务器发送给客户端的，用来判断客户端死没死。如果你看过上面第一条，就会知道非持久化消息堆积到一定程度会写到文件里，这个写的过程会阻塞所有动作，而且会持续20到30秒，并且随着内存的增大而增大。当客户端发完消息调用connection.close()时，会期待服务器对于关闭连接的回答，如果超过15秒没回答就直接调用socket层的close关闭tcp连接了。这时客户端发出的消息其实还在服务器的缓存里等待处理，不过由于服务器心跳包的设置，导致发生了java.net.SocketException异常，把缓存里的数据作废了，没处理的消息全部丢失。
+    解决方案：用持久化消息，或者非持久化消息及时处理不要堆积，或者启动事务，启动事务后，commit()方法会负责任的等待服务器的返回，也就不会关闭连接导致消息丢失了。
 
 3. 持久化消息非常慢。
-默认的情况下，非持久化的消息是异步发送的，持久化的消息是同步发送的，遇到慢一点的硬盘，发送消息的速度是无法忍受的。但是在开启事务的情况下，消息都是异步发送的，效率会有2个数量级的提升。所以在发送持久化消息时，请务必开启事务模式。其实发送非持久化消息时也建议开启事务，因为根本不会影响性能。
+    默认的情况下，非持久化的消息是异步发送的，持久化的消息是同步发送的，遇到慢一点的硬盘，发送消息的速度是无法忍受的。但是在开启事务的情况下，消息都是异步发送的，效率会有2个数量级的提升。所以在发送持久化消息时，请务必开启事务模式。其实发送非持久化消息时也建议开启事务，因为根本不会影响性能。
 
 4. 消息的不均匀消费。
-有时在发送一些消息之后，开启2个消费者去处理消息。会发现一个消费者处理了所有的消息，另一个消费者根本没收到消息。原因在于ActiveMQ的prefetch机制。当消费者去获取消息时，不会一条一条去获取，而是一次性获取一批，默认是1000条。这些预获取的消息，在还没确认消费之前，在管理控制台还是可以看见这些消息的，但是不会再分配给其他消费者，此时这些消息的状态应该算作“已分配未消费”，如果消息最后被消费，则会在服务器端被删除，如果消费者崩溃，则这些消息会被重新分配给新的消费者。但是如果消费者既不消费确认，又不崩溃，那这些消息就永远躺在消费者的缓存区里无法处理。更通常的情况是，消费这些消息非常耗时，你开了10个消费者去处理，结果发现只有一台机器吭哧吭哧处理，另外9台啥事不干。
-
-解决方案：将prefetch设为1，每次处理1条消息，处理完再去取，这样也慢不了多少。
+    有时在发送一些消息之后，开启2个消费者去处理消息。会发现一个消费者处理了所有的消息，另一个消费者根本没收到消息。原因在于ActiveMQ的prefetch机制。当消费者去获取消息时，不会一条一条去获取，而是一次性获取一批，默认是1000条。这些预获取的消息，在还没确认消费之前，在管理控制台还是可以看见这些消息的，但是不会再分配给其他消费者，此时这些消息的状态应该算作“已分配未消费”，如果消息最后被消费，则会在服务器端被删除，如果消费者崩溃，则这些消息会被重新分配给新的消费者。但是如果消费者既不消费确认，又不崩溃，那这些消息就永远躺在消费者的缓存区里无法处理。更通常的情况是，消费这些消息非常耗时，你开了10个消费者去处理，结果发现只有一台机器吭哧吭哧处理，另外9台啥事不干。
+    解决方案：将prefetch设为1，每次处理1条消息，处理完再去取，这样也慢不了多少。
 
 5. 死信队列。
-如果你想在消息处理失败后，不被服务器删除，还能被其他消费者处理或重试，可以关闭AUTO_ACKNOWLEDGE，将ack交由程序自己处理。那如果使用了AUTO_ACKNOWLEDGE，消息是什么时候被确认的，还有没有阻止消息确认的方法？有！
-
-消费消息有2种方法，一种是调用consumer.receive()方法，该方法将阻塞直到获得并返回一条消息。这种情况下，消息返回给方法调用者之后就自动被确认了。另一种方法是采用listener回调函数，在有消息到达时，会调用listener接口的onMessage方法。在这种情况下，在onMessage方法执行完毕后，消息才会被确认，此时只要在方法中抛出异常，该消息就不会被确认。那么问题来了，如果一条消息不能被处理，会被退回服务器重新分配，如果只有一个消费者，该消息又会重新被获取，重新抛异常。就算有多个消费者，往往在一个服务器上不能处理的消息，在另外的服务器上依然不能被处理。难道就这么退回--获取--报错死循环了吗？
-
-在重试6次后，ActiveMQ认为这条消息是“有毒”的，将会把消息丢到死信队列里。如果你的消息不见了，去ActiveMQ.DLQ里找找，说不定就躺在那里。
+    如果你想在消息处理失败后，不被服务器删除，还能被其他消费者处理或重试，可以关闭AUTO_ACKNOWLEDGE，将ack交由程序自己处理。那如果使用了AUTO_ACKNOWLEDGE，消息是什么时候被确认的，还有没有阻止消息确认的方法？有！
+    消费消息有2种方法，一种是调用consumer.receive()方法，该方法将阻塞直到获得并返回一条消息。这种情况下，消息返回给方法调用者之后就自动被确认了。另一种方法是采用listener回调函数，在有消息到达时，会调用listener接口的onMessage方法。在这种情况下，在onMessage方法执行完毕后，消息才会被确认，此时只要在方法中抛出异常，该消息就不会被确认。那么问题来了，如果一条消息不能被处理，会被退回服务器重新分配，如果只有一个消费者，该消息又会重新被获取，重新抛异常。就算有多个消费者，往往在一个服务器上不能处理的消息，在另外的服务器上依然不能被处理。难道就这么退回--获取--报错死循环了吗？
+    在重试6次后，ActiveMQ认为这条消息是“有毒”的，将会把消息丢到死信队列里。如果你的消息不见了，去ActiveMQ.DLQ里找找，说不定就躺在那里。
 
 6. ActiveMQ中的消息重发时间间隔和重发次数吗？
-ActiveMQ：是Apache出品，最流行的，能力强劲的开源消息总线。是一个完全支持JMS1.1和J2EE 1.4规范的 JMS Provider实现。JMS（Java消息服务）：是一个Java平台中关于面向消息中间件（MOM）的API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信。    
-
-首先，我们得大概了解下，在哪些情况下，ActiveMQ服务器会将消息重发给消费者，这里为简单起见，假定采用的消息发送模式为队列（即消息发送者和消息接收者）。
-
-①　如果消息接收者在处理完一条消息的处理过程后没有对MOM进行应答，则该消息将由MOM重发.
-
-②　如果我们队某个队列设置了预读参数（consumer.prefetchSize），如果消息接收者在处理第一条消息时（没向MOM发送消息接收确认）就宕机了，则预读数量的所有消息都将被重发!
-
-③　如果Session是事务的，则只要消息接收者有一条消息没有确认，或发送消息期间MOM或客户端某一方突然宕机了，则该事务范围中的所有消息MOM都将重发。
-
-④　说到这里，大家可能会有疑问，ActiveMQ消息服务器怎么知道消费者客户端到底是消息正在处理中还没来得急对消息进行应答还是已经处理完成了没有应答或是宕机了根本没机会应答呢？其实在所有的客户端机器上，内存中都运行着一套客户端的ActiveMQ环境，该环境负责缓存发来的消息，负责维持着和ActiveMQ服务器的消息通讯，负责失效转移（fail-over）等，所有的判断和处理都是由这套客户端环境来完成的。
-
-我们可以来对ActiveMQ的重发策略（Redelivery Policy）来进行自定义配置，其中的配置参数主要有以下几个：
-
-可用的属性
-
- 属性 默认值 说明
-
-l  collisionAvoidanceFactor  默认值0.15 ,  设置防止冲突范围的正负百分比，只有启用useCollisionAvoidance参数时才生效。
-
-l  maximumRedeliveries  默认值6 ,  最大重传次数，达到最大重连次数后抛出异常。为-1时不限制次数，为0时表示不进行重传。
-
-l  maximumRedeliveryDelay  默认值-1,  最大传送延迟，只在useExponentialBackOff为true时有效（V5.5），假设首次重连间隔为10ms，倍数为2，那么第二次重连时间间隔为 20ms，第三次重连时间间隔为40ms，当重连时间间隔大的最大重连时间间隔时，以后每次重连时间间隔都为最大重连时间间隔。
-
-l  initialRedeliveryDelay  默认值1000L,  初始重发延迟时间
-
-l  redeliveryDelay  默认值1000L,  重发延迟时间，当initialRedeliveryDelay=0时生效（v5.4）
-
-l  useCollisionAvoidance  默认值false,  启用防止冲突功能，因为消息接收时是可以使用多线程并发处理的，应该是为了重发的安全性，避开所有并发线程都在同一个时间点进行消息接收处理。所有线程在同一个时间点处理时会发生什么问题呢？应该没有问题，只是为了平衡broker处理性能，不会有时很忙，有时很空闲。
-
-l  useExponentialBackOff  默认值false,  启用指数倍数递增的方式增加延迟时间。
-
-l  backOffMultiplier  默认值5,  重连时间间隔递增倍数，只有值大于1和启用useExponentialBackOff参数时才生效。 
-
+    ActiveMQ：是Apache出品，最流行的，能力强劲的开源消息总线。是一个完全支持JMS1.1和J2EE 1.4规范的 JMS Provider实现。JMS（Java消息服务）：是一个Java平台中关于面向消息中间件（MOM）的API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信。    
+    首先，我们得大概了解下，在哪些情况下，ActiveMQ服务器会将消息重发给消费者，这里为简单起见，假定采用的消息发送模式为队列（即消息发送者和消息接收者）。
+    ①　如果消息接收者在处理完一条消息的处理过程后没有对MOM进行应答，则该消息将由MOM重发.
+    ②　如果我们队某个队列设置了预读参数（consumer.prefetchSize），如果消息接收者在处理第一条消息时（没向MOM发送消息接收确认）就宕机了，则预读数量的所有消息都将被重发!
+    ③　如果Session是事务的，则只要消息接收者有一条消息没有确认，或发送消息期间MOM或客户端某一方突然宕机了，则该事务范围中的所有消息MOM都将重发。
+    ④　说到这里，大家可能会有疑问，ActiveMQ消息服务器怎么知道消费者客户端到底是消息正在处理中还没来得急对消息进行应答还是已经处理完成了没有应答或是宕机了根本没机会应答呢？其实在所有的客户端机器上，内存中都运行着一套客户端的ActiveMQ环境，该环境负责缓存发来的消息，负责维持着和ActiveMQ服务器的消息通讯，负责失效转移（fail-over）等，所有的判断和处理都是由这套客户端环境来完成的。
+    我们可以来对ActiveMQ的重发策略（Redelivery Policy）来进行自定义配置，其中的配置参数主要有以下几个：
+    可用的属性
+     属性 默认值 说明
+    l  collisionAvoidanceFactor  默认值0.15 ,  设置防止冲突范围的正负百分比，只有启用useCollisionAvoidance参数时才生效。
+    l  maximumRedeliveries  默认值6 ,  最大重传次数，达到最大重连次数后抛出异常。为-1时不限制次数，为0时表示不进行重传。
+    l  maximumRedeliveryDelay  默认值-1,  最大传送延迟，只在useExponentialBackOff为true时有效（V5.5），假设首次重连间隔为10ms，倍数为2，那么第二次重连时间间隔为 20ms，第三次重连时间间隔为40ms，当重连时间间隔大的最大重连时间间隔时，以后每次重连时间间隔都为最大重连时间间隔。
+    l  initialRedeliveryDelay  默认值1000L,  初始重发延迟时间
+    l  redeliveryDelay  默认值1000L,  重发延迟时间，当initialRedeliveryDelay=0时生效（v5.4）
+    l  useCollisionAvoidance  默认值false,  启用防止冲突功能，因为消息接收时是可以使用多线程并发处理的，应该是为了重发的安全性，避开所有并发线程都在同一个时间点进行消息接收处理。所有线程在同一个时间点处理时会发生什么问题呢？应该没有问题，只是为了平衡broker处理性能，不会有时很忙，有时很空闲。
+    l  useExponentialBackOff  默认值false,  启用指数倍数递增的方式增加延迟时间。
+    l  backOffMultiplier  默认值5,  重连时间间隔递增倍数，只有值大于1和启用useExponentialBackOff参数时才生效。 
 
 
 ActiveMQ消息传送机制以及ACK机制详解
-
     AcitveMQ是作为一种消息存储和分发组件，涉及到client与broker端数据交互的方方面面，它不仅要担保消息的存储安全性，还要提供额外的手段来确保消息的分发是可靠的。
-
- 
-
 一. ActiveMQ消息传送机制
-
     Producer客户端使用来发送消息的， Consumer客户端用来消费消息；它们的协同中心就是ActiveMQ broker,broker也是让producer和consumer调用过程解耦的工具，最终实现了异步RPC/数据交换的功能。随着ActiveMQ的不断发展，支持了越来越多的特性，也解决开发者在各种场景下使用ActiveMQ的需求。比如producer支持异步调用；使用flow control机制让broker协同consumer的消费速率；consumer端可以使用prefetchACK来最大化消息消费的速率；提供"重发策略"等来提高消息的安全性等。在此我们不详细介绍。
-
- 
-
     一条消息的生命周期如下:  
-
      图片中简单的描述了一条消息的生命周期,不过在不同的架构环境中,message的流动行可能更加复杂.将在稍后有关broker的架构中详解..一条消息从producer端发出之后，一旦被broker正确保存，那么它将会被consumer消费，然后ACK，broker端才会删除；不过当消息过期或者存储设备溢出时，也会终结它。 
-
      这是一张很复杂，而且有些凌乱的图片；这张图片中简单的描述了:1)producer端如何发送消息 2) consumer端如何消费消息 3) broker端如何调度。如果用文字来描述图示中的概念，恐怕一言难尽。图示中，提及到prefetchAck，以及消息同步、异步发送的基本逻辑；这对你了解下文中的ACK机制将有很大的帮助。
 
 二. optimizeACK
-
     "可优化的ACK"，这是ActiveMQ对于consumer在消息消费时，对消息ACK的优化选项，也是consumer端最重要的优化参数之一，你可以通过如下方式开启:
-
     1) 在brokerUrl中增加如下查询字符串： 
-
- 
-
-[java] view plain copy
-String brokerUrl = "tcp://localhost:61616?" +   
-                   "jms.optimizeAcknowledge=true" +   
-                   "&jms.optimizeAcknowledgeTimeOut=30000" +   
-                   "&jms.redeliveryPolicy.maximumRedeliveries=6";  
-ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);  
- 
-
+        [java] view plain copy
+        String brokerUrl = "tcp://localhost:61616?" +   
+                           "jms.optimizeAcknowledge=true" +   
+                           "&jms.optimizeAcknowledgeTimeOut=30000" +   
+                           "&jms.redeliveryPolicy.maximumRedeliveries=6";  
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);  
     2) 在destinationUri中，增加如下查询字符串：
-
- 
-
-[java] view plain copy
-String queueName = "test-queue?customer.prefetchSize";  
-Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);  
-Destination queue = session.createQueue(queueName);  
-     
-
-    我们需要在brokerUrl指定optimizeACK选项，在destinationUri中指定prefetchSize(预获取)选项，其中brokerUrl参数选项是全局的，即当前factory下所有的connection/session/consumer都会默认使用这些值；而destinationUri中的选项，只会在使用此destination的consumer实例中有效；如果同时指定，brokerUrl中的参数选项值将会被覆盖。optimizeAck表示是否开启“优化ACK”，只有在为true的情况下，prefetchSize(下文中将会简写成prefetch)以及optimizeAcknowledgeTimeout参数才会有意义。此处需要注意"optimizeAcknowledgeTimeout"选项只能在brokerUrl中配置。
-
-    prefetch值建议在destinationUri中指定，因为在brokerUrl中指定比较繁琐；在brokerUrl中，queuePrefetchSize和topicPrefetchSize都需要单独设定："&jms.prefetchPolicy.queuePrefetch=12&jms.prefetchPolicy.topicPrefetch=12"等来逐个指定。
-
- 
-
-    如果prefetchACK为true，那么prefetch必须大于0；当prefetchACK为false时，你可以指定prefetch为0以及任意大小的正数。不过，当prefetch=0是，表示consumer将使用PULL(拉取)的方式从broker端获取消息，broker端将不会主动push消息给client端，直到client端发送PullCommand时；当prefetch>0时，就开启了broker push模式，此后只要当client端消费且ACK了一定的消息之后，会立即push给client端多条消息。
-
- 
-
-    当consumer端使用receive()方法同步获取消息时，prefetch可以为0和任意正值；当prefetch=0时，那么receive()方法将会首先发送一个PULL指令并阻塞，直到broker端返回消息为止，这也意味着消息只能逐个获取(类似于Request<->Response)，这也是Activemq中PULL消息模式；当prefetch > 0时，broker端将会批量push给client 一定数量的消息(<= prefetch),client端会把这些消息(unconsumedMessage)放入到本地的队列中，只要此队列有消息，那么receive方法将会立即返回，当一定量的消息ACK之后，broker端会继续批量push消息给client端。
-
- 
-
-    当consumer端使用MessageListener异步获取消息时，这就需要开发设定的prefetch值必须 >=1,即至少为1；在异步消费消息模式中，设定prefetch=0,是相悖的，也将获得一个Exception。
-
- 
-
-    此外，我们还可以brokerUrl中配置“redelivery”策略，比如当一条消息处理异常时，broker端可以重发的最大次数；和下文中提到REDELIVERED_ACK_TYPE互相协同。当消息需要broker端重发时，consumer会首先在本地的“deliveredMessage队列”(Consumer已经接收但还未确认的消息队列)删除它，然后向broker发送“REDELIVERED_ACK_TYPE”类型的确认指令，broker将会把指令中指定的消息重新添加到pendingQueue(亟待发送给consumer的消息队列)中，直到合适的时机，再次push给client。
-
- 
-
-    到目前为止，或许你知道了optimizeACK和prefeth的大概意义，不过我们可能还会有些疑惑！！optimizeACK和prefetch配合，将会达成一个高效的消息消费模型：批量获取消息，并“延迟”确认(ACK)。prefetch表达了“批量获取”消息的语义，broker端主动的批量push多条消息给client端，总比client多次发送PULL指令然后broker返回一条消息的方式要优秀很多，它不仅减少了client端在获取消息时阻塞的次数和阻塞的时间，还能够大大的减少网络开支。optimizeACK表达了“延迟确认”的语义(ACK时机)，client端在消费消息后暂且不发送ACK，而是把它缓存下来(pendingACK)，等到这些消息的条数达到一定阀值时，只需要通过一个ACK指令把它们全部确认；这比对每条消息都逐个确认，在性能上要提高很多。由此可见，prefetch优化了消息传送的性能，optimizeACK优化了消息确认的性能。
-
- 
-
-    当consumer端消息消费的速率很高(相对于producer生产消息)，而且消息的数量也很大时(比如消息源源不断的生产)，我们使用optimizeACK + prefetch将会极大的提升consumer的性能。不过反过来：
+        [java] view plain copy
+        String queueName = "test-queue?customer.prefetchSize";  
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);  
+        Destination queue = session.createQueue(queueName);  
+        我们需要在brokerUrl指定optimizeACK选项，在destinationUri中指定prefetchSize(预获取)选项，其中brokerUrl参数选项是全局的，即当前factory下所有的connection/session/consumer都会默认使用这些值；而destinationUri中的选项，只会在使用此destination的consumer实例中有效；如果同时指定，brokerUrl中的参数选项值将会被覆盖。optimizeAck表示是否开启“优化ACK”，只有在为true的情况下，prefetchSize(下文中将会简写成prefetch)以及optimizeAcknowledgeTimeout参数才会有意义。此处需要注意"optimizeAcknowledgeTimeout"选项只能在brokerUrl中配置。
+        prefetch值建议在destinationUri中指定，因为在brokerUrl中指定比较繁琐；在brokerUrl中，queuePrefetchSize和topicPrefetchSize都需要单独设定："&jms.prefetchPolicy.queuePrefetch=12&jms.prefetchPolicy.topicPrefetch=12"等来逐个指定。
+        如果prefetchACK为true，那么prefetch必须大于0；当prefetchACK为false时，你可以指定prefetch为0以及任意大小的正数。不过，当prefetch=0是，表示consumer将使用PULL(拉取)的方式从broker端获取消息，broker端将不会主动push消息给client端，直到client端发送PullCommand时；当prefetch>0时，就开启了broker push模式，此后只要当client端消费且ACK了一定的消息之后，会立即push给client端多条消息。
+        当consumer端使用receive()方法同步获取消息时，prefetch可以为0和任意正值；当prefetch=0时，那么receive()方法将会首先发送一个PULL指令并阻塞，直到broker端返回消息为止，这也意味着消息只能逐个获取(类似于Request<->Response)，这也是Activemq中PULL消息模式；当prefetch > 0时，broker端将会批量push给client 一定数量的消息(<= prefetch),client端会把这些消息(unconsumedMessage)放入到本地的队列中，只要此队列有消息，那么receive方法将会立即返回，当一定量的消息ACK之后，broker端会继续批量push消息给client端。
+        当consumer端使用MessageListener异步获取消息时，这就需要开发设定的prefetch值必须 >=1,即至少为1；在异步消费消息模式中，设定prefetch=0,是相悖的，也将获得一个Exception。
+        此外，我们还可以brokerUrl中配置“redelivery”策略，比如当一条消息处理异常时，broker端可以重发的最大次数；和下文中提到REDELIVERED_ACK_TYPE互相协同。当消息需要broker端重发时，consumer会首先在本地的“deliveredMessage队列”(Consumer已经接收但还未确认的消息队列)删除它，然后向broker发送“REDELIVERED_ACK_TYPE”类型的确认指令，broker将会把指令中指定的消息重新添加到pendingQueue(亟待发送给consumer的消息队列)中，直到合适的时机，再次push给client。
+        到目前为止，或许你知道了optimizeACK和prefeth的大概意义，不过我们可能还会有些疑惑！！optimizeACK和prefetch配合，将会达成一个高效的消息消费模型：批量获取消息，并“延迟”确认(ACK)。prefetch表达了“批量获取”消息的语义，broker端主动的批量push多条消息给client端，总比client多次发送PULL指令然后broker返回一条消息的方式要优秀很多，它不仅减少了client端在获取消息时阻塞的次数和阻塞的时间，还能够大大的减少网络开支。optimizeACK表达了“延迟确认”的语义(ACK时机)，client端在消费消息后暂且不发送ACK，而是把它缓存下来(pendingACK)，等到这些消息的条数达到一定阀值时，只需要通过一个ACK指令把它们全部确认；这比对每条消息都逐个确认，在性能上要提高很多。由此可见，prefetch优化了消息传送的性能，optimizeACK优化了消息确认的性能。
+        当consumer端消息消费的速率很高(相对于producer生产消息)，而且消息的数量也很大时(比如消息源源不断的生产)，我们使用optimizeACK + prefetch将会极大的提升consumer的性能。不过反过来：
 
     1) 如果consumer端消费速度很慢(对消息的处理是耗时的)，过大的prefetchSize，并不能有效的提升性能，反而不利于consumer端的负载均衡(只针对queue)；按照良好的设计准则，当consumer消费速度很慢时，我们通常会部署多个consumer客户端，并使用较小的prefetch，同时关闭optimizeACK，可以让消息在多个consumer间“负载均衡”(即均匀的发送给每个consumer)；如果较大的prefetchSize，将会导致broker一次性push给client大量的消息，但是这些消息需要很久才能ACK(消息积压)，而且在client故障时，还会导致这些消息的重发。
-
- 
-
     2) 如果consumer端消费速度很快，但是producer端生成消息的速率较慢，比如生产者10秒钟生成10条消息，但是consumer一秒就能消费完毕，而且我们还部署了多个consumer！！这种场景下，建议开启optimizeACK，但是需要设置较小的prefetchSize；这样可以保证每个consumer都能有"活干"，否则将会出现一个consumer非常忙碌，但是其他consumer几乎收不到消息。
-
- 
-
     3) 如果消息很重要，特别是不原因接收到”redelivery“的消息，那么我们需要将optimizeACK=false，prefetchSize=1
-
- 
-
     既然optimizeACK是”延迟“确认，那么就引入一种潜在的风险：在消息被消费之后还没有来得及确认时，client端发生故障，那么这些消息就有可能会被重新发送给其他consumer，那么这种风险就需要client端能够容忍“重复”消息。
-
- 
-
     prefetch值默认为1000，当然这个值可能在很多场景下是偏大的；我们暂且不考虑ACK_MODE(参见下文)，通常情况下，我们只需要简单的统计出单个consumer每秒的最大消费消息数即可，比如一个consumer每秒可以处理100个消息，我们期望consumer端每2秒确认一次，那么我们的prefetchSize可以设置为100 * 2 /0.65大概为300。无论如何设定此值，client持有的消息条数最大为：prefetch + “DELIVERED_ACK_TYPE消息条数”(DELIVERED_ACK_TYPE参见下文)
-
- 
-
      即使当optimizeACK为true，也只会当session的ACK_MODE为AUTO_ACKNOWLEDGE时才会生效，即在其他类型的ACK_MODE时consumer端仍然不会“延迟确认”，即:
-
-[java] view plain copy
-consumer.optimizeAck = connection.optimizeACK && session.isAutoAcknowledge()  
- 
+    [java] view plain copy
+    consumer.optimizeAck = connection.optimizeACK && session.isAutoAcknowledge()  
+     
 
     当consumer.optimizeACK有效时，如果客户端已经消费但尚未确认的消息(deliveredMessage)达到prefetch * 0.65，consumer端将会自动进行ACK；同时如果离上一次ACK的时间间隔，已经超过"optimizeAcknowledgeTimout"毫秒，也会导致自动进行ACK。
 
