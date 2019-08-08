@@ -94,3 +94,4 @@
     当consumer.optimizeACK有效时，如果客户端已经消费但尚未确认的消息(deliveredMessage)达到prefetch * 0.65，consumer端将会自动进行ACK；同时如果离上一次ACK的时间间隔，已经超过"optimizeAcknowledgeTimout"毫秒，也会导致自动进行ACK。
 
     ActiveMQ生产者以同步和异步方式发送消息
+    https://blog.csdn.net/weixin_33949359/article/details/91946828
