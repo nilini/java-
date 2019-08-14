@@ -1,0 +1,17 @@
+1、不要手动调用System.gc();
+    System.gc() 和 Runtime.getRuntime().gc(); 是一样的。
+    调用System.gc()之后不保证立即gc也不保证会gc()。
+    只有使用CMS或G1时，配置-XX:+ExplicitGCInvokesConcurrent，调用System.gc()才会在触发了并发GC后就返回。
+    如果开启了+DisableExplicitGC则System.gc()不执行任何GC就直接返回。 
+
+2、尽量少用正则
+
+3、ArrayList随机遍历快，LinkedList添加删除快
+
+4、容器初始化时尽可能指定长度
+    大致判断所需空间，然后指定一个长度new ArrayList<>(10); new HashMap<>(32);
+    如果指定长度远远大于实际，则会造成资源浪费。
+    如果指定长度远远小于实际，则会频繁扩容，造成性能损耗。
+
+5、使用数据库连接池和线程池
+    

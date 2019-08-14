@@ -2,6 +2,21 @@
     让Tomcat只负责jsp文件的解析工作。
 
 2、Connector连接器的配置
-    Tomcat连接器的三种方式：bio、nio、apr。apr性能最优，bio性能最差。而 Tomcat 7 使用的 Connector  默认就启用的 Apr 协议，但需要系统安装 Apr 库，否则就会使用 bio 方式。
+    Tomcat连接器的三种方式：bio、nio、apr。
+    apr性能最优，bio性能最差。
+    而 Tomcat 7 使用的 Connector  默认就启用的 Apr 协议，但需要系统安装 Apr 库，否则就会使用 bio 方式。
 
-3、
+3、AJP协议
+    AJP是一个二进制的TCP传输协议，相比HTTP这种纯文本的协议来说，效率和性能更高。
+    但是浏览器只支持HTTP协议，可以通过Apache的proxy_ajp模块或nginx的nginx_ajp_module模块进行反向代理，暴露http协议给客户端访问。
+    注释掉ajp  <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+
+4、设置线程池
+    <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
+        maxThreads="500" minSpareThreads="50" prestartminSpareThreads="true"/>
+
+5、设置最大等待队列数
+    默认情况下，请求发送到tomcat，如果tomcat正忙，那么请求会一直等待，这样虽然可以保证每个请求都能请求到，但是请求时间就会变长。
+    可以设置最大等待队列大小，如果超过就不等待，直接拒绝。
+    <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
+        maxThreads="500" minSpareThreads="100" prestartminSpareThreads="true" maxQueueSize="100"/>
