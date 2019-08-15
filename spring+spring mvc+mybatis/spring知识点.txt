@@ -1,0 +1,33 @@
+1、SSM是如何协作完成功能开发的？
+    Spring MVC负责请求的转发和视图管理；
+    MyBatis负责数据库查询；
+    Spring则是负责协调，实现业务对象的管理。
+
+2、SprinMVC的工作原理？
+    1）DispatcherServlet捕获请求；
+    2）DispatcherServlet对请求的URL进行解析；
+    3）根据解析后的URL调用HandlerMapping，获得Handler配置的所有相关对象，最后一HandlerExecutionChain对象的形式返回。
+    4）DispatcherServlet根据获得的Handler，选择一个合适的HandlerAdapter，提取Request中的模型数据，填充Handler入参，开始执行Controller.
+    5）Controller执行完成后，选择一个合适的ViewResolver将返回对象ModelAndView返回给DispatcherServlet。ViewResolver结合Model和View，来渲染视图，并将渲染结果返回给客户端。
+
+3、如何手写代码实现Spring原理
+    Spring是个巨大的工厂，这个工厂就是专门用来生成Bean，所以如果手写的一定要用到工厂设计模式。
+
+4、Spring AOP的底层原理是什么？
+    Spring AOP的底层是通过代理来实现的：基于JDK的动态代理和基于CgLIB的动态代理。
+
+5、Spring中配置的bean是在什么时候实例化的？
+    默认容器在加载的时候初始化bean，但是也可以通过设置lazy-init属性来延迟加载。
+
+6、IOC、AOP、DI在项目开发中的应用场景？
+    IOC（控制反转）：项目中的Bean都可以交给Spring容器来维护，这样Bean的创建及销毁以及声明周期都由Spring来处理。
+    DI（依赖注入）：IOC和DI在Spring是一个等同的概念。
+    AOP：事务、日志、权限等。
+
+7、Spring如何配置声明式事务控制？   
+    两种方式：
+        基于tx和aop名字空间的xml配置文件。
+        基于@Transactional注解。
+
+8、Spring的作用域有哪些？
+    Spring的作用域有singleton、prototype、request、session和global session

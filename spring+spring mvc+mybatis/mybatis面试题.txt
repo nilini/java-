@@ -7,7 +7,8 @@
 2、Xml映射文件中，除了常见的select|insert|updae|delete标签之外，还有哪些标签？
 注：这道题是京东面试官面试我时问的。
 
-答：还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，加上动态sql的9个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中<sql>为sql片段标签，通过<include>标签引入sql片段，<selectKey>为不支持自增的主键生成策略标签。
+答：还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，
+    加上动态sql的9个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中<sql>为sql片段标签，通过<include>标签引入sql片段，<selectKey>为不支持自增的主键生成策略标签。
 
 3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？
 注：这道题也是京东面试官面试我时问的。
@@ -133,10 +134,15 @@ BatchExecutor：执行update（没有select，JDBC批处理不支持select），
 
 原理是，Mybatis解析A标签，发现A标签引用了B标签，但是B标签尚未解析到，尚不存在，此时，Mybatis会将A标签标记为未解析状态，然后继续解析余下的标签，包含B标签，待所有标签解析完毕，Mybatis会重新解析那些被标记为未解析的标签，此时再解析A标签时，B标签已经存在，A标签也就可以正常解析完成了。
 
+
 17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？
 注：我出的
 
-答：Mybatis将所有Xml配置信息都封装到All-In-One重量级对象Configuration内部。在Xml映射文件中，<parameterMap>标签会被解析为ParameterMap对象，其每个子元素会被解析为ParameterMapping对象。<resultMap>标签会被解析为ResultMap对象，其每个子元素会被解析为ResultMapping对象。每一个<select>、<insert>、<update>、<delete>标签均会被解析为MappedStatement对象，标签内的sql会被解析为BoundSql对象。
+答：Mybatis将所有Xml配置信息都封装到All-In-One重量级对象Configuration内部。
+   在Xml映射文件中，<parameterMap>标签会被解析为ParameterMap对象，其每个子元素会被解析为ParameterMapping对象。
+   <resultMap>标签会被解析为ResultMap对象，其每个子元素会被解析为ResultMapping对象。
+   每一个<select>、<insert>、<update>、<delete>标签均会被解析为MappedStatement对象，标签内的sql会被解析为BoundSql对象。
+
 
 18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？
 注：我出的
