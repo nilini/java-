@@ -1,0 +1,36 @@
+Spring Clound集群中，各个角色的通信基于REST服务，所以要使用REST服务的请求客户端。Spring自带有RestTemplate（使用HttpClient发送请求）。
+Feign 是一个REST客户端。
+
+在Spring cloud中使用Feign
+1、pom.xml中加入依赖
+    <dependency>
+        <groupid>org.springframework.cloud</groupid> 
+        <artifactid>spring-cloud-starter-feign</artifactid>
+    </dependency>
+
+2、服务调用启动类中，打开Feign开关
+    @SpringBootApplication 
+    @EnableEurekaClient 
+    @EnableFeignClients 
+    public class InvokerApplication { 
+        public static roid main(String[] args) { 
+            SprigApplication.run(InvokerApplication.class args);
+        }
+    }
+3、客户端 PersonClient.java
+    @FeignClient("spring-feign-provider") //声明调用 的服务名称
+    public interface PersonClient {
+        @RequestMapping(method = RequestMethod.GET, value="/hello")
+        String hello();
+    }
+4、控制器中调用
+    @RestController 
+    @Configuration 
+    public class InvokerController { 
+        @Autowired 
+        private PersonClient personClient; // 注入PersonClient的Bean，客户端实例的创建和维护，Speing容器都帮忙实现了。
+        @RequestMapping{value =”/invokeHello”, method = RequestMethod .GET) 
+            public String invokeHello{) { 
+            return personClient.hello{) ;
+        }
+    }

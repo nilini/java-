@@ -1,0 +1,3 @@
+spring-boot-starter-web
+spring-boot-starter-thymeleaf
+spring-boot-starter-security

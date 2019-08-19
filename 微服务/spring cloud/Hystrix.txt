@@ -1,0 +1,70 @@
+Hystrix 服务熔断、将级
+服务雪崩：微服务链路调用，某个服务响应时间过长，该服务占用的资源也就会越来越多，进而引起系统雪崩。
+断路器：即保险开关，某个服务有异常时，就将此服务断开。
+服务熔断：是对雪崩效应的一种微服务链路保护机制。
+
+pom依赖
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-hystrix</artifactId>
+</dependency>
+
+注解：
+    @EnableCircuitBreaker：主启动类添加对Hystrix的支持。
+    @HystrixCommand：服务调用注解
+    
+    @RestController
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    public class DeptController {
+        @Autowired
+        private DeptService service;
+        //一旦调用服务方法失败抛出“错误信息后，胡自动范湖用@HystrixCommand标注好的fallbackMethod调用类中的指定方法”
+        @HystrixCommand(fallbackMethod = "processHystrix_Get")
+        public Dept get(@PathVariable("id") Long id) {
+            return service.get(id);
+        }
+        public Dept processHystrix_Get(@PathVariable("id") Long id) {
+            Dept dept = new Dept();
+            dept.setDeptno(id);
+            dept.setDname("该ID：" + id + "没有对应的信息，null--@HystrixCommand");
+            dept.setDb_source("no this database in mysql");
+            return dept;
+        }
+    }
+
+
+统一处理：
+    @Component//不要忘记添加
+    public class DeptClientServiceFallbackFactory implements FallbackFactory<DeptClientService> {
+        @Override
+        public DeptClientService create(Throwable throwable) {
+            return new DeptClientService() {
+                @Override
+                public Dept get(long id) {
+                    Dept dept = new Dept();
+                    dept.setDeptno(id);
+                    dept.setDname("该ID：" + id + "没有对应的信息，Consumer客户端提供的信息，此服务Provider已关闭");
+                    dept.setDb_source("no this database in mysql");
+                    return dept;
+                }
+                @Override
+                public List<Dept> list() {
+                    return null;
+                }
+                @Override
+                public boolean add(Dept dept) {
+                    return false;
+                }
+            };
+        }
+    }
+=====================================================
+    @FeignClient(value = "MICROSERVICECLOUD-DEPT",fallbackFactory = DeptClientServiceFallbackFactory.class)
+    public interface DeptClientService {
+        @RequestMapping(value = "/dept/get/{id}", method = RequestMethod.GET)
+        public Dept get(@PathVariable("id") long id);
+        @RequestMapping(value = "/dept/list", method = RequestMethod.GET)
+        public List<Dept> list();
+        @RequestMapping(value = "/dept/add}", method = RequestMethod.POST)
+        public boolean add(Dept dept);
+    }
