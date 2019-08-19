@@ -96,5 +96,17 @@ public ModelAndView myErrorHandler(MyException ex) {
     避免大量的Maven导入和各个版本冲突。
 
 11、DevTools
+    热部署：应用启动后会把编译好的Class文件加载到虚拟机中，正常情况下项目修改了源文件是需要全部重新编译并加载（需要重启应用），而热部署就是监听Class文件的变动，
+    只把发生修改的Class重新加载，而不是重新启动应用。
     spring-boot-devtools的模块来使Spring Boot应用支持热部署，提高开发者的开发效率，无需手动重启Spring Boot应用。
     https://blog.csdn.net/jaydenwang5310/article/details/78738847
+
+    实现热部署的两种方式：1）spring-boot-devtools 2）Spring Loaded
+    1）
+       类文件热部署：每当类路径中的文件发生更改时，DevTools会自动重新启动正在运行的应用程序，并应用新的更改。重启仍然需要花费很多时间，但是DevTools使用两个类加载器 base 和 restart，
+                    base类加载器加载不更改的类，每当触发重启时，都会重新启动并重新创建restart的类加载器。这样重新启动应用程序速度比平常快得多。
+       页面热部署：这个可以直接在application.properties文件中配置spring.thymeleaf.cache=false来实现。不然要修改模板文件后还要重启。
+       修改类–>保存：应用会重启
+       修改配置文件–>保存：应用会重启
+       修改页面–>保存：应用不会重启，但会重新加载，页面会刷新（原理是将spring.thymeleaf.cache设为false，参考:Spring Boot配置模板引擎）
+    2）Spring Loaded
